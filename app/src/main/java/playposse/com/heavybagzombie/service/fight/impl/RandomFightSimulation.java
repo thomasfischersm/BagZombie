@@ -14,13 +14,15 @@ public class RandomFightSimulation extends AbstractFightSimulation {
 
     private static final String LOG_CAT = RandomFightSimulation.class.getSimpleName();
 
+    public static final Random RANDOM = new Random();
+
     public RandomFightSimulation(long duration) {
         super(duration);
     }
 
     @Override
     protected void onFightStart() {
-        VocalPlayer.play(getContext(), VocalPlayer.Message.readyFight);
+        playSound(VocalPlayer.Message.readyFight);
         scheduleRandomCommand();
     }
 
@@ -28,7 +30,11 @@ public class RandomFightSimulation extends AbstractFightSimulation {
     protected void onScoreHit(VocalPlayer.Message command, long reactionTime) {
         Log.i(LOG_CAT, "Scored hit for " + command);
         getFightStatsSaver().saveHit(command.name(), reactionTime);
-        VocalPlayer.play(getContext(), VocalPlayer.Message.hit);
+        if (reactionTime < 500) {
+            playSound(VocalPlayer.Message.heavy);
+        } else {
+            playSound(VocalPlayer.Message.hit);
+        }
         scheduleRandomCommand();
     }
 
@@ -41,16 +47,19 @@ public class RandomFightSimulation extends AbstractFightSimulation {
 
     @Override
     protected void onFightDone() {
-        VocalPlayer.play(getContext(), VocalPlayer.Message.stop);
+        playSound(VocalPlayer.Message.stop);
     }
 
     @Override
     protected void onFightAborted() {
-        VocalPlayer.play(getContext(), VocalPlayer.Message.stop);
+        playSound(VocalPlayer.Message.stop);
     }
 
     private void scheduleRandomCommand() {
-        long delay = new Random().nextInt(3_000) + 500;
+        // Taking a random number of a random number creates a non-uniform distribution. Generally,
+        // a fight should have a lot of quick hits with some random outliers that wait longer.
+        int number = RANDOM.nextInt(3_000);
+        long delay = RANDOM.nextInt(number) + 500;
 
         final VocalPlayer.Message command;
         switch (new Random().nextInt(6)) {

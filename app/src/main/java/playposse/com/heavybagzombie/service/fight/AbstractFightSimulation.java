@@ -33,7 +33,9 @@ public abstract class AbstractFightSimulation implements FightSimulation {
     private FightStatsSaver fightStatsSaver;
 
     private VocalPlayer.Message currentCommand;
+    private VocalPlayer.Message pendingCommand;
     private Long commandStart;
+    private boolean isSoundActive = false;
 
     public AbstractFightSimulation(long duration) {
         this.duration = duration;
@@ -101,19 +103,27 @@ public abstract class AbstractFightSimulation implements FightSimulation {
         onFightAborted();
     }
 
-    protected final void scheduleCommand(final VocalPlayer.Message command, long delayMs) {
-        currentCommand = command;
-        Log.i(LOG_CAT, "Schedule currentCommand: " + command.name());
+    protected final void scheduleCommand(final VocalPlayer.Message message, long delayMs) {
+        currentCommand = message;
+        Log.i(LOG_CAT, "Schedule currentCommand: " + message.name());
 
         timer.schedule(
                 new TimerTask() {
                     @Override
                     public void run() {
-                        VocalPlayer.play(context, command);
-                        commandStart = System.currentTimeMillis();
+                        if (isSoundActive) {
+                            pendingCommand = message;
+                        } else {
+                            startCommand(message);
+                        }
                     }
                 },
                 delayMs);
+    }
+
+    private void startCommand(VocalPlayer.Message message) {
+        playSound(message);
+        commandStart = System.currentTimeMillis();
     }
 
     protected Context getContext() {
@@ -122,6 +132,23 @@ public abstract class AbstractFightSimulation implements FightSimulation {
 
     protected FightStatsSaver getFightStatsSaver() {
         return fightStatsSaver;
+    }
+
+    protected void playSound(VocalPlayer.Message message) {
+        isSoundActive = true;
+        VocalPlayer.play(
+                context,
+                message,
+                new VocalPlayer.Callback() {
+            @Override
+            public void onComplete() {
+                isSoundActive = false;
+                if (pendingCommand != null) {
+                    startCommand(pendingCommand);
+                    pendingCommand = null;
+                }
+            }
+        });
     }
 
     protected abstract void onFightStart();
