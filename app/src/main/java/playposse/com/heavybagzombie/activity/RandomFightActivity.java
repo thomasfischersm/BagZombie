@@ -1,23 +1,20 @@
-package playposse.com.heavybagzombie;
+package playposse.com.heavybagzombie.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.AudioEvent;
-import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.onsets.OnsetHandler;
 import be.tarsos.dsp.onsets.PercussionOnsetDetector;
-import be.tarsos.dsp.pitch.PitchDetectionHandler;
-import be.tarsos.dsp.pitch.PitchDetectionResult;
-import be.tarsos.dsp.pitch.PitchProcessor;
+import playposse.com.heavybagzombie.BagZombiePreferences;
+import playposse.com.heavybagzombie.CommandPlayer;
+import playposse.com.heavybagzombie.R;
 
 /**
  * An {@link android.app.Activity} that creates a fight with random commands.

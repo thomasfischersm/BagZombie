@@ -1,4 +1,4 @@
-package playposse.com.heavybagzombie;
+package playposse.com.heavybagzombie.activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -22,6 +22,8 @@ import be.tarsos.dsp.onsets.PercussionOnsetDetector;
 import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
+import playposse.com.heavybagzombie.BagZombiePreferences;
+import playposse.com.heavybagzombie.R;
 
 public class SlapDetectionActivity extends AppCompatActivity {
 
@@ -88,7 +90,7 @@ public class SlapDetectionActivity extends AppCompatActivity {
         fightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), RandomFightActivity.class));
+                startActivity(new Intent(getApplicationContext(), FightActivity.class));
             }
         });
     }

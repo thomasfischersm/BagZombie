@@ -5,19 +5,28 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
+        android:name=".BagZombieApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SlapDetectionActivity">
+        
+        <service android:name=".service.FightEngineService" />
+        
+        <provider
+            android:authorities="com.playposse.heavybagzombie"
+            android:name=".provider.BagZombieContentProvider" />
+
+        <activity android:name=".activity.SlapDetectionActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RandomFightActivity"></activity>
+        <activity android:name=".activity.RandomFightActivity" />
+        <activity android:name=".activity.FightActivity"></activity>
     </application>
 
 </manifest>
