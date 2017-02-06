@@ -11,7 +11,7 @@ import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.onsets.OnsetHandler;
 import be.tarsos.dsp.onsets.PercussionOnsetDetector;
 import playposse.com.heavybagzombie.BagZombiePreferences;
-import playposse.com.heavybagzombie.CommandPlayer;
+import playposse.com.heavybagzombie.VocalPlayer;
 
 /**
  * An implementation of {@link FightSimulation} that implements all the basics of recognizing
@@ -32,7 +32,7 @@ public abstract class AbstractFightSimulation implements FightSimulation {
     private AudioDispatcher dispatcher;
     private FightStatsSaver fightStatsSaver;
 
-    private CommandPlayer.Command currentCommand;
+    private VocalPlayer.Message currentCommand;
     private Long commandStart;
 
     public AbstractFightSimulation(long duration) {
@@ -68,7 +68,7 @@ public abstract class AbstractFightSimulation implements FightSimulation {
                     Log.i(LOG_CAT, "Register hit for command " + currentCommand.name());
                     long bufferSizeInMs = BUFFER_SIZE * 1_000 / SAMPLE_RATE;
                     long bufferProcessed = (long) (time * 1_000);
-                    CommandPlayer.Command command = currentCommand;
+                    VocalPlayer.Message command = currentCommand;
                     long reactionTime = now - commandStart;
 
                     // Reset for the next command.
@@ -101,7 +101,7 @@ public abstract class AbstractFightSimulation implements FightSimulation {
         onFightAborted();
     }
 
-    protected final void scheduleCommand(final CommandPlayer.Command command, long delayMs) {
+    protected final void scheduleCommand(final VocalPlayer.Message command, long delayMs) {
         currentCommand = command;
         Log.i(LOG_CAT, "Schedule currentCommand: " + command.name());
 
@@ -109,7 +109,7 @@ public abstract class AbstractFightSimulation implements FightSimulation {
                 new TimerTask() {
                     @Override
                     public void run() {
-                        CommandPlayer.play(context, command);
+                        VocalPlayer.play(context, command);
                         commandStart = System.currentTimeMillis();
                     }
                 },
@@ -126,7 +126,7 @@ public abstract class AbstractFightSimulation implements FightSimulation {
 
     protected abstract void onFightStart();
 
-    protected abstract void onScoreHit(CommandPlayer.Command command, long reactionTime);
+    protected abstract void onScoreHit(VocalPlayer.Message command, long reactionTime);
 
     protected abstract void onScoreMiss();
 

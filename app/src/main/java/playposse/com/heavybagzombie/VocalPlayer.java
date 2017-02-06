@@ -4,35 +4,44 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
 
-import playposse.com.heavybagzombie.service.FightEngineService;
-
 /**
  * Media player that plays a voice command.
  */
-public class CommandPlayer {
+public class VocalPlayer {
 
-    private static final String LOG_CAT = CommandPlayer.class.getSimpleName();
+    private static final String LOG_CAT = VocalPlayer.class.getSimpleName();
 
-    public static enum Command {
+    public static enum Message {
         hit,
+        heavy,
         miss,
-        readyfight,
+        tooSlow,
+        readyFight,
         stop,
         one,
         two,
+        three,
+        four,
+        five,
+        six,
     }
 
-    public static void play(Context context, Command command) {
-        Log.i(LOG_CAT, "Playing sound " + command.name());
-        switch (command) {
+    public static void play(Context context, Message message) {
+        Log.i(LOG_CAT, "Playing sound " + message.name());
+        switch (message) {
             case hit:
                 play(context, R.raw.hit2);
                 break;
+            case heavy:
+                play(context, R.raw.heavy);
             case miss:
                 play(context, R.raw.miss);
                 break;
-            case readyfight:
-                play(context, R.raw.readyfight);
+            case tooSlow:
+                play(context, R.raw.too_slow);
+                break;
+            case readyFight:
+                play(context, R.raw.ready_fight);
                 break;
             case stop:
                 play(context, R.raw.stop);
@@ -42,6 +51,18 @@ public class CommandPlayer {
                 break;
             case two:
                 play(context, R.raw.two);
+                break;
+            case three:
+                play(context, R.raw.three);
+                break;
+            case four:
+                play(context, R.raw.four);
+                break;
+            case five:
+                play(context, R.raw.five);
+                break;
+            case six:
+                play(context, R.raw.six);
                 break;
         }
     }

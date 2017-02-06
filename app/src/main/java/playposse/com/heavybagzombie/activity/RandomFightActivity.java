@@ -13,7 +13,7 @@ import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.onsets.OnsetHandler;
 import be.tarsos.dsp.onsets.PercussionOnsetDetector;
 import playposse.com.heavybagzombie.BagZombiePreferences;
-import playposse.com.heavybagzombie.CommandPlayer;
+import playposse.com.heavybagzombie.VocalPlayer;
 import playposse.com.heavybagzombie.R;
 
 /**
@@ -27,7 +27,7 @@ public class RandomFightActivity extends AppCompatActivity {
     private final static int BUFFER_SIZE = 1024;
 
     private AudioDispatcher dispatcher;
-    private CommandPlayer.Command currentCommand;
+    private VocalPlayer.Message currentCommand;
     private long commandStart;
 
     @Override
@@ -72,13 +72,13 @@ public class RandomFightActivity extends AppCompatActivity {
                     public void run() {
                         switch (new Random().nextInt(2)) {
                             case 0:
-                                currentCommand = CommandPlayer.Command.one;
+                                currentCommand = VocalPlayer.Message.one;
                                 break;
                             case 1:
-                                currentCommand = CommandPlayer.Command.two;
+                                currentCommand = VocalPlayer.Message.two;
                                 break;
                         }
-                        CommandPlayer.play(getApplicationContext(), currentCommand);
+                        VocalPlayer.play(getApplicationContext(), currentCommand);
                         commandStart = System.currentTimeMillis();
                     }
                 },
@@ -94,7 +94,7 @@ public class RandomFightActivity extends AppCompatActivity {
                 long duration = now - commandStart;
                 Log.i(LOG_CAT, "Reaction time: " + duration);
                 Log.i(LOG_CAT, "Reported time: " + time);
-                CommandPlayer.play(getApplicationContext(), CommandPlayer.Command.hit);
+                VocalPlayer.play(getApplicationContext(), VocalPlayer.Message.hit);
 
                 currentCommand = null;
                 queueCommand();
