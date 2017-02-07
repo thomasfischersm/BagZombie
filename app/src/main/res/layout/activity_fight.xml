@@ -49,7 +49,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:text="Hits" />
+                android:text="@string/hit_count_label" />
 
             <TextView
                 android:id="@+id/hitCountTextView"
@@ -61,10 +61,22 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:text="Misses" />
+                android:text="@string/miss_count_label" />
 
             <TextView
                 android:id="@+id/missCountTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="5" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="@string/timeout_count_label" />
+
+            <TextView
+                android:id="@+id/timeoutCountTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="5" />

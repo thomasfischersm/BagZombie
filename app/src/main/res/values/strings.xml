@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Heavy Bag Zombie</string>
 
+    <!-- Settings activity -->
     <string name="sensitivity_legend">Sensitivity of peak detector applied to broadband detection function (%).</string>
     <string name="threshold_legend">Energy rise within a frequency bin necessary to count toward broadband total (dB).</string>
+
+    <!-- Fight activity -->
+    <string name="hit_count_label">Hits</string>
+    <string name="miss_count_label">Misses</string>
+    <string name="timeout_count_label">Timeout</string>
 </resources>

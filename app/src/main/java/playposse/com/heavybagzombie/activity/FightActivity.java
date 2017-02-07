@@ -36,6 +36,7 @@ public class FightActivity extends AppCompatActivity {
 
     private TextView hitCountTextView;
     private TextView missCountTextView;
+    private TextView timeoutCountTextView;
     private ListView hitLogListView;
     private ImageButton startButton;
     private ImageButton pauseButton;
@@ -52,6 +53,7 @@ public class FightActivity extends AppCompatActivity {
 
         hitCountTextView = (TextView) findViewById(R.id.hitCountTextView);
         missCountTextView = (TextView) findViewById(R.id.missCountTextView);
+        timeoutCountTextView = (TextView) findViewById(R.id.timeoutCountTextView);
         hitLogListView = (ListView) findViewById(R.id.hitLogListView);
         startButton = (ImageButton) findViewById(R.id.startButton);
         pauseButton = (ImageButton) findViewById(R.id.pauseButton);
@@ -145,6 +147,10 @@ public class FightActivity extends AppCompatActivity {
 
                 int missCount = cursor.getInt(cursor.getColumnIndex(FightTable.MISS_COUNT_COLUMN));
                 missCountTextView.setText(Integer.toString(missCount));
+
+                int timeoutCount =
+                        cursor.getInt(cursor.getColumnIndex(FightTable.TIMEOUT_COUNT_COLUMN));
+                timeoutCountTextView.setText(Integer.toString(timeoutCount));
             }
         }
     }

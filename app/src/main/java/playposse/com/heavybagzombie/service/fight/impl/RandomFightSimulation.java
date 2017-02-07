@@ -14,6 +14,9 @@ public class RandomFightSimulation extends AbstractFightSimulation {
 
     private static final String LOG_CAT = RandomFightSimulation.class.getSimpleName();
 
+    public static final int MAX_COMMAND_DELAY = 3_000;
+    public static final int COMMAND_TIMEOUT = 1_500;
+
     public static final Random RANDOM = new Random();
 
     public RandomFightSimulation(long duration) {
@@ -41,7 +44,7 @@ public class RandomFightSimulation extends AbstractFightSimulation {
     @Override
     protected void onScoreMiss() {
         Log.i(LOG_CAT, "Scored miss");
-        VocalPlayer.play(getContext(), VocalPlayer.Message.miss);
+        playSound(VocalPlayer.Message.miss);
         getFightStatsSaver().saveMiss();
     }
 
@@ -51,15 +54,26 @@ public class RandomFightSimulation extends AbstractFightSimulation {
     }
 
     @Override
+    protected void onScoreTimeout(VocalPlayer.Message command) {
+        playSound(VocalPlayer.Message.tooSlow);
+        getFightStatsSaver().saveTimeout(command.name());
+        scheduleRandomCommand();
+    }
+
+    @Override
     protected void onFightAborted() {
         playSound(VocalPlayer.Message.stop);
     }
 
     private void scheduleRandomCommand() {
+        if (!isFightActive()) {
+            return;
+        }
+
         // Taking a random number of a random number creates a non-uniform distribution. Generally,
         // a fight should have a lot of quick hits with some random outliers that wait longer.
-        int number = RANDOM.nextInt(3_000);
-        long delay = RANDOM.nextInt(number) + 500;
+        int number = RANDOM.nextInt(MAX_COMMAND_DELAY);
+        long delay = RANDOM.nextInt(number);
 
         final VocalPlayer.Message command;
         switch (new Random().nextInt(6)) {
@@ -86,7 +100,7 @@ public class RandomFightSimulation extends AbstractFightSimulation {
                 break;
         }
 
-        scheduleCommand(command, delay);
+        scheduleCommand(command, delay, delay + COMMAND_TIMEOUT);
         Log.i(LOG_CAT, "Issued command " + command.name());
     }
 }

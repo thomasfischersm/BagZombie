@@ -35,7 +35,10 @@ public abstract class AbstractFightSimulation implements FightSimulation {
     private VocalPlayer.Message currentCommand;
     private VocalPlayer.Message pendingCommand;
     private Long commandStart;
+    TimerTask commandTask;
+    TimerTask timeoutTask;
     private boolean isSoundActive = false;
+    private boolean isFightActive = false;
 
     public AbstractFightSimulation(long duration) {
         this.duration = duration;
@@ -54,7 +57,7 @@ public abstract class AbstractFightSimulation implements FightSimulation {
                     @Override
                     public void run() {
                         dispatcher.stop();
-
+                        isFightActive = false;
                         onFightDone();
                     }
                 },
@@ -68,6 +71,8 @@ public abstract class AbstractFightSimulation implements FightSimulation {
                 long now = System.currentTimeMillis();
                 if (commandStart != null) {
                     Log.i(LOG_CAT, "Register hit for command " + currentCommand.name());
+                    timeoutTask.cancel();
+
                     long bufferSizeInMs = BUFFER_SIZE * 1_000 / SAMPLE_RATE;
                     long bufferProcessed = (long) (time * 1_000);
                     VocalPlayer.Message command = currentCommand;
@@ -93,6 +98,7 @@ public abstract class AbstractFightSimulation implements FightSimulation {
         dispatcher.addAudioProcessor(percussionOnsetDetector);
         new Thread(dispatcher, "Audio Dispatcher").start();
 
+        isFightActive = true;
         onFightStart();
     }
 
@@ -100,25 +106,48 @@ public abstract class AbstractFightSimulation implements FightSimulation {
     public final void stopFight() {
         dispatcher.stop();
         timer.cancel();
+        isFightActive = false;
         onFightAborted();
     }
 
-    protected final void scheduleCommand(final VocalPlayer.Message message, long delayMs) {
+    /**
+     * Schedules a command. The command will be played after the {@code delayMs}. If the player
+     * doesn't make a hit within the {@code timeout}, the command is canceled as failed.
+     */
+    protected final void scheduleCommand(
+            final VocalPlayer.Message message,
+            long delayMs,
+            long timeout) {
+
         currentCommand = message;
         Log.i(LOG_CAT, "Schedule currentCommand: " + message.name());
 
-        timer.schedule(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (isSoundActive) {
-                            pendingCommand = message;
-                        } else {
-                            startCommand(message);
-                        }
-                    }
-                },
-                delayMs);
+        commandTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (isSoundActive) {
+                    pendingCommand = message;
+                } else {
+                    startCommand(message);
+                }
+            }
+        };
+        timer.schedule(commandTask, delayMs);
+
+        timeoutTask = new TimerTask() {
+            @Override
+            public void run() {
+                Log.i(LOG_CAT, "Execute timeout task");
+                commandTask.cancel();
+                VocalPlayer.Message command = currentCommand;
+                currentCommand = null;
+                commandStart = null;
+
+                onScoreTimeout(command);
+            }
+        };
+        timer.schedule(timeoutTask, timeout);
+        Log.i(LOG_CAT, "Scheduled timeout task. " + timeout);
     }
 
     private void startCommand(VocalPlayer.Message message) {
@@ -140,15 +169,19 @@ public abstract class AbstractFightSimulation implements FightSimulation {
                 context,
                 message,
                 new VocalPlayer.Callback() {
-            @Override
-            public void onComplete() {
-                isSoundActive = false;
-                if (pendingCommand != null) {
-                    startCommand(pendingCommand);
-                    pendingCommand = null;
-                }
-            }
-        });
+                    @Override
+                    public void onComplete() {
+                        isSoundActive = false;
+                        if (pendingCommand != null) {
+                            startCommand(pendingCommand);
+                            pendingCommand = null;
+                        }
+                    }
+                });
+    }
+
+    protected boolean isFightActive() {
+        return isFightActive;
     }
 
     protected abstract void onFightStart();
@@ -156,6 +189,8 @@ public abstract class AbstractFightSimulation implements FightSimulation {
     protected abstract void onScoreHit(VocalPlayer.Message command, long reactionTime);
 
     protected abstract void onScoreMiss();
+
+    protected abstract void onScoreTimeout(VocalPlayer.Message command);
 
     protected abstract void onFightDone();
 

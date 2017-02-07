@@ -32,6 +32,7 @@ public class BagZombieContentProvider extends ContentProvider {
 
     private int hitCount = 0;
     private int missCount = 0;
+    private int timeoutCount = 0;
     private List<HitRecord> hitRecords = new ArrayList<>();
 
     public BagZombieContentProvider() {
@@ -61,7 +62,7 @@ public class BagZombieContentProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case FIGHT_TABLE_CODE:
                 cursor =  new MatrixCursor(BagZombieContract.FightTable.COLUMN_NAMES, 1);
-                cursor.addRow(new Object[]{hitCount, missCount});
+                cursor.addRow(new Object[]{hitCount, missCount, timeoutCount});
                 break;
             case HIT_RECORD_TABLE_CODE:
                 cursor = new MatrixCursor(BagZombieContract.HitRecordTable.COLUMN_NAMES, 1);

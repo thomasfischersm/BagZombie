@@ -17,10 +17,12 @@ public final class BagZombieContract {
 
         public static final String HIT_COUNT_COLUMN = "hitCount";
         public static final String MISS_COUNT_COLUMN = "missCount";
+        public static final String TIMEOUT_COUNT_COLUMN = "timeoutCount";
 
         public static final String[] COLUMN_NAMES = new String[]{
                 HIT_COUNT_COLUMN,
-                MISS_COUNT_COLUMN};
+                MISS_COUNT_COLUMN,
+                TIMEOUT_COUNT_COLUMN};
     }
 
     public static final class HitRecordTable implements  BaseColumns {
@@ -50,6 +52,14 @@ public final class BagZombieContract {
 
         public static final String PATH = "saveMiss";
         public static final Uri CONTENT_URI = createContentUri(PATH);
+    }
+
+    public static final class SaveTimeoutAction {
+
+        public static final String PATH = "saveTimeout";
+        public static final Uri CONTENT_URI = createContentUri(PATH);
+
+        public static final String COMMAND_COLUMN = "command";
     }
 
     private static Uri createContentUri(String path) {
