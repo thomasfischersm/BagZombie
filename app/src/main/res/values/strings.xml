@@ -9,4 +9,5 @@
     <string name="hit_count_label">Hits</string>
     <string name="miss_count_label">Misses</string>
     <string name="timeout_count_label">Timeout</string>
+    <string name="timeout_reaction_time_constant">Timeout</string>
 </resources>

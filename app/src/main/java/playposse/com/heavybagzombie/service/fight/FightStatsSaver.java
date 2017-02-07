@@ -3,6 +3,8 @@ package playposse.com.heavybagzombie.service.fight;
 import android.content.ContentValues;
 import android.content.Context;
 
+import playposse.com.heavybagzombie.service.fight.impl.PunchCombination;
+
 import static playposse.com.heavybagzombie.provider.BagZombieContract.ResetFightStatsAction;
 import static playposse.com.heavybagzombie.provider.BagZombieContract.SaveHitAction;
 import static playposse.com.heavybagzombie.provider.BagZombieContract.SaveMissAction;
@@ -19,10 +21,8 @@ public class FightStatsSaver {
         this.context = context;
     }
 
-    public void saveHit(String command, long delay) {
-        ContentValues values = new ContentValues();
-        values.put(SaveHitAction.COMMAND_COLUMN, command);
-        values.put(SaveHitAction.DELAY_COLUMN, delay);
+    public void saveHit(PunchCombination punchCombination) {
+        ContentValues values = punchCombination.toContentValues();
         context.getContentResolver().insert(SaveHitAction.CONTENT_URI, values);
     }
 

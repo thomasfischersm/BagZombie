@@ -1,5 +1,6 @@
 package playposse.com.heavybagzombie.service.fight.impl;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.Random;
@@ -30,10 +31,10 @@ public class RandomFightSimulation extends AbstractFightSimulation {
     }
 
     @Override
-    protected void onScoreHit(VocalPlayer.Message command, long reactionTime) {
-        Log.i(LOG_CAT, "Scored hit for " + command);
-        getFightStatsSaver().saveHit(command.name(), reactionTime);
-        if (reactionTime < 500) {
+    protected void onScoreHit(PunchCombination punchCombination) {
+        Log.i(LOG_CAT, "Scored hit for " + punchCombination);
+        getFightStatsSaver().saveHit(punchCombination);
+        if (punchCombination.getOverallReactionTime() < 500) {
             playSound(VocalPlayer.Message.heavy);
         } else {
             playSound(VocalPlayer.Message.hit);
@@ -54,9 +55,9 @@ public class RandomFightSimulation extends AbstractFightSimulation {
     }
 
     @Override
-    protected void onScoreTimeout(VocalPlayer.Message command) {
+    protected void onScoreTimeout(PunchCombination punchCombination) {
         playSound(VocalPlayer.Message.tooSlow);
-        getFightStatsSaver().saveTimeout(command.name());
+        getFightStatsSaver().saveTimeout(punchCombination.getCommandString());
         scheduleRandomCommand();
     }
 
@@ -75,7 +76,16 @@ public class RandomFightSimulation extends AbstractFightSimulation {
         int number = RANDOM.nextInt(MAX_COMMAND_DELAY);
         long delay = RANDOM.nextInt(number);
 
-        final VocalPlayer.Message command;
+        VocalPlayer.Message command = pickRandomPunch();
+        VocalPlayer.Message[] commands = {command};
+        PunchCombination punchCombination = new PunchCombination(commands);
+
+        scheduleCommand(punchCombination, delay, delay + (COMMAND_TIMEOUT));
+        Log.i(LOG_CAT, "Issued command " + punchCombination.getCommandString());
+    }
+
+    private VocalPlayer.Message pickRandomPunch() {
+        VocalPlayer.Message command;
         switch (new Random().nextInt(6)) {
             case 0:
                 command = VocalPlayer.Message.one;
@@ -99,8 +109,6 @@ public class RandomFightSimulation extends AbstractFightSimulation {
                 command = VocalPlayer.Message.one;
                 break;
         }
-
-        scheduleCommand(command, delay, delay + COMMAND_TIMEOUT);
-        Log.i(LOG_CAT, "Issued command " + command.name());
+        return command;
     }
 }

@@ -65,7 +65,7 @@ public class BagZombieContentProvider extends ContentProvider {
 
         switch (uriMatcher.match(uri)) {
             case FIGHT_TABLE_CODE:
-                cursor =  new MatrixCursor(BagZombieContract.FightTable.COLUMN_NAMES, 1);
+                cursor = new MatrixCursor(BagZombieContract.FightTable.COLUMN_NAMES, 1);
                 cursor.addRow(new Object[]{hitCount, missCount, timeoutCount});
                 break;
             case HIT_RECORD_TABLE_CODE:
@@ -74,7 +74,11 @@ public class BagZombieContentProvider extends ContentProvider {
                     cursor.addRow(new Object[]{
                             hitRecords.indexOf(hitRecord),
                             hitRecord.getCommand(),
-                            hitRecord.getDelay()});
+                            hitRecord.getOverallReactionTime(),
+                            hitRecord.getReactionTimes()[0],
+                            hitRecord.getReactionTimes()[1],
+                            hitRecord.getReactionTimes()[2],
+                            hitRecord.getReactionTimes()[3]});
                 }
                 break;
 
@@ -94,10 +98,23 @@ public class BagZombieContentProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         switch (uriMatcher.match(uri)) {
             case SAVE_HIT_CODE:
-                String hitCommand = values.getAsString(SaveHitAction.COMMAND_COLUMN);
-                int delay = values.getAsInteger(SaveHitAction.DELAY_COLUMN);
                 hitCount++;
-                hitRecords.add(new HitRecord(hitCommand, delay));
+
+                String hitCommand = values.getAsString(SaveHitAction.COMMAND_COLUMN);
+                int overallReactionTime =
+                        values.getAsInteger(SaveHitAction.OVERALL_REACTION_TIME_COLUMN);
+                Integer reactionTime0 = values.getAsInteger(SaveHitAction.REACTION_TIME_0);
+                Integer reactionTime1 = values.getAsInteger(SaveHitAction.REACTION_TIME_1);
+                Integer reactionTime2 = values.getAsInteger(SaveHitAction.REACTION_TIME_2);
+                Integer reactionTime3 = values.getAsInteger(SaveHitAction.REACTION_TIME_3);
+
+                hitRecords.add(new HitRecord(
+                        hitCommand,
+                        overallReactionTime,
+                        reactionTime0,
+                        reactionTime1,
+                        reactionTime2,
+                        reactionTime3));
 
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
                 getContext().getContentResolver().notifyChange(HitRecordTable.CONTENT_URI, null);
@@ -109,7 +126,7 @@ public class BagZombieContentProvider extends ContentProvider {
             case SAVE_TIMEOUT_CODE:
                 String missCommand = values.getAsString(SaveTimeoutAction.COMMAND_COLUMN);
                 timeoutCount++;
-                hitRecords.add(new HitRecord(missCommand, -1));
+                hitRecords.add(new HitRecord(missCommand, -1, null, null, null, null));
 
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
                 break;

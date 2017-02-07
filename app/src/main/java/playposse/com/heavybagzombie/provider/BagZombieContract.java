@@ -31,12 +31,20 @@ public final class BagZombieContract {
         public static final Uri CONTENT_URI = createContentUri(PATH);
 
         public static final String COMMAND_COLUMN = "command";
-        public static final String DELAY_COLUMN = "delay";
+        public static final String OVERALL_REACTION_TIME_COLUMN = "delay";
+        public static final String REACTION_TIME_0 = "reactionTime0";
+        public static final String REACTION_TIME_1 = "reactionTime1";
+        public static final String REACTION_TIME_2 = "reactionTime2";
+        public static final String REACTION_TIME_3 = "reactionTime3";
 
         public static final String[] COLUMN_NAMES = new String[]{
                 _ID,
                 COMMAND_COLUMN,
-                DELAY_COLUMN};
+                OVERALL_REACTION_TIME_COLUMN,
+                REACTION_TIME_0,
+                REACTION_TIME_1,
+                REACTION_TIME_2,
+                REACTION_TIME_3};
     }
 
     public static final class SaveHitAction {
@@ -45,7 +53,11 @@ public final class BagZombieContract {
         public static final Uri CONTENT_URI = createContentUri(PATH);
 
         public static final String COMMAND_COLUMN = "command";
-        public static final String DELAY_COLUMN = "delay";
+        public static final String OVERALL_REACTION_TIME_COLUMN = "overallReactionTime";
+        public static final String REACTION_TIME_0 = "reactionTime0";
+        public static final String REACTION_TIME_1 = "reactionTime1";
+        public static final String REACTION_TIME_2 = "reactionTime2";
+        public static final String REACTION_TIME_3 = "reactionTime3";
     }
 
     public static final class SaveMissAction {

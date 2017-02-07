@@ -1,7 +1,6 @@
 package playposse.com.heavybagzombie.activity;
 
 import android.content.ComponentName;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -22,7 +21,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import playposse.com.heavybagzombie.R;
-import playposse.com.heavybagzombie.provider.BagZombieContract;
 import playposse.com.heavybagzombie.service.FightEngine;
 import playposse.com.heavybagzombie.service.FightEngineService;
 import playposse.com.heavybagzombie.service.fight.impl.RandomFightSimulation;
@@ -190,11 +188,11 @@ public class FightActivity extends AppCompatActivity {
                     commandTextView.setText(commandStr);
 
                     int reactionTime =
-                            cursor.getInt(cursor.getColumnIndex(HitRecordTable.DELAY_COLUMN));
+                            cursor.getInt(cursor.getColumnIndex(HitRecordTable.OVERALL_REACTION_TIME_COLUMN));
                     if (reactionTime >= 0) {
                         reactionTimeTextView.setText("" + reactionTime);
                     } else {
-                        reactionTimeTextView.setText("Missed");
+                        reactionTimeTextView.setText(R.string.timeout_reaction_time_constant);
                     }
                 }
             });

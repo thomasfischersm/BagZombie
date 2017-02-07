@@ -12,6 +12,7 @@ import be.tarsos.dsp.onsets.OnsetHandler;
 import be.tarsos.dsp.onsets.PercussionOnsetDetector;
 import playposse.com.heavybagzombie.BagZombiePreferences;
 import playposse.com.heavybagzombie.VocalPlayer;
+import playposse.com.heavybagzombie.service.fight.impl.PunchCombination;
 
 /**
  * An implementation of {@link FightSimulation} that implements all the basics of recognizing
@@ -32,11 +33,11 @@ public abstract class AbstractFightSimulation implements FightSimulation {
     private AudioDispatcher dispatcher;
     private FightStatsSaver fightStatsSaver;
 
-    private VocalPlayer.Message currentCommand;
-    private VocalPlayer.Message pendingCommand;
-    private Long commandStart;
-    TimerTask commandTask;
-    TimerTask timeoutTask;
+    private PunchCombination punchCombination = null;
+    private Long timeout = null;
+    private TimerTask commandTask;
+    private TimerTask timeoutTask;
+    private boolean isCommandPending = false;
     private boolean isSoundActive = false;
     private boolean isFightActive = false;
 
@@ -69,21 +70,18 @@ public abstract class AbstractFightSimulation implements FightSimulation {
             @Override
             public void handleOnset(double time, double salience) {
                 long now = System.currentTimeMillis();
-                if (commandStart != null) {
-                    Log.i(LOG_CAT, "Register hit for command " + currentCommand.name());
-                    timeoutTask.cancel();
+                if ((punchCombination != null) && punchCombination.hasStarted()) {
+                    Log.i(LOG_CAT, "Register hit for command "
+                            + punchCombination.getCommandString());
+                    punchCombination.recordReactionTime();
 
-                    long bufferSizeInMs = BUFFER_SIZE * 1_000 / SAMPLE_RATE;
-                    long bufferProcessed = (long) (time * 1_000);
-                    VocalPlayer.Message command = currentCommand;
-                    long reactionTime = now - commandStart;
-
-                    // Reset for the next command.
-                    Log.i(LOG_CAT, "Set currentCommand to null");
-                    currentCommand = null;
-                    commandStart = null;
-
-                    onScoreHit(command, reactionTime);
+                    if (!punchCombination.canRecordMoreReactionTimes()) {
+                        punchCombination.recordEndTime();
+                        timeoutTask.cancel();
+                        onScoreHit(punchCombination);
+                    } else {
+                        scheduleTimeoutTask();
+                    }
                 } else {
                     onScoreMiss();
                 }
@@ -116,45 +114,53 @@ public abstract class AbstractFightSimulation implements FightSimulation {
      * doesn't make a hit within the {@code timeout}, the command is canceled as failed.
      */
     protected final void scheduleCommand(
-            final VocalPlayer.Message message,
+            final PunchCombination punchCombination,
             long delayMs,
             long timeout) {
 
-        currentCommand = message;
-        pendingCommand = null;
-        Log.i(LOG_CAT, "Schedule currentCommand: " + message.name());
+        this.punchCombination = punchCombination;
+        this.timeout = timeout;
+        Log.i(LOG_CAT, "Schedule currentCommand: " + punchCombination.getCommandString());
 
         commandTask = new TimerTask() {
             @Override
             public void run() {
                 if (isSoundActive) {
-                    pendingCommand = message;
+                    isCommandPending = true;
                 } else {
-                    startCommand(message);
+                    punchCombination.recordStartTime();
+                    startCommand(punchCombination.getNextCommand());
                 }
             }
         };
         timer.schedule(commandTask, delayMs);
+
+        scheduleTimeoutTask();
+        Log.i(LOG_CAT, "Scheduled timeout task. " + timeout);
+    }
+
+    private void scheduleTimeoutTask() {
+        if (timeoutTask != null) {
+            timeoutTask.cancel();
+        }
 
         timeoutTask = new TimerTask() {
             @Override
             public void run() {
                 Log.i(LOG_CAT, "Execute timeout task");
                 commandTask.cancel();
-                VocalPlayer.Message command = currentCommand;
-                currentCommand = null;
-                commandStart = null;
+                PunchCombination currentPunchCombination = punchCombination;
+                punchCombination = null;
+                isCommandPending = false;
 
-                onScoreTimeout(command);
+                onScoreTimeout(currentPunchCombination);
             }
         };
         timer.schedule(timeoutTask, timeout);
-        Log.i(LOG_CAT, "Scheduled timeout task. " + timeout);
     }
 
     private void startCommand(VocalPlayer.Message message) {
         playSound(message);
-        commandStart = System.currentTimeMillis();
     }
 
     protected Context getContext() {
@@ -174,9 +180,16 @@ public abstract class AbstractFightSimulation implements FightSimulation {
                     @Override
                     public void onComplete() {
                         isSoundActive = false;
-                        if (pendingCommand != null) {
-                            startCommand(pendingCommand);
-                            pendingCommand = null;
+                        if (isCommandPending) {
+                            if (!punchCombination.hasStarted()) {
+                                punchCombination.recordStartTime();
+                            }
+                            startCommand(punchCombination.getNextCommand());
+                            isCommandPending = false;
+                        } else if ((punchCombination != null)
+                                && punchCombination.hasStarted()
+                                && punchCombination.canPlayMoreCommands()) {
+                            startCommand(punchCombination.getNextCommand());
                         }
                     }
                 });
@@ -188,11 +201,11 @@ public abstract class AbstractFightSimulation implements FightSimulation {
 
     protected abstract void onFightStart();
 
-    protected abstract void onScoreHit(VocalPlayer.Message command, long reactionTime);
+    protected abstract void onScoreHit(PunchCombination punchCombination);
 
     protected abstract void onScoreMiss();
 
-    protected abstract void onScoreTimeout(VocalPlayer.Message command);
+    protected abstract void onScoreTimeout(PunchCombination punchCombination);
 
     protected abstract void onFightDone();
 
