@@ -99,6 +99,7 @@ public abstract class AbstractFightSimulation implements FightSimulation {
         new Thread(dispatcher, "Audio Dispatcher").start();
 
         isFightActive = true;
+        fightStatsSaver.resetFightStats();
         onFightStart();
     }
 
@@ -120,6 +121,7 @@ public abstract class AbstractFightSimulation implements FightSimulation {
             long timeout) {
 
         currentCommand = message;
+        pendingCommand = null;
         Log.i(LOG_CAT, "Schedule currentCommand: " + message.name());
 
         commandTask = new TimerTask() {

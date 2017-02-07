@@ -62,6 +62,12 @@ public final class BagZombieContract {
         public static final String COMMAND_COLUMN = "command";
     }
 
+    public static final class ResetFightStatsAction {
+
+        public static final String PATH = "resetFightStats";
+        public static final Uri CONTENT_URI = createContentUri(PATH);
+    }
+
     private static Uri createContentUri(String path) {
         return android.net.Uri.parse("content://" + AUTHORITY + "/" + path);
 

@@ -11,12 +11,12 @@ import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.URIResolver;
-
 import static playposse.com.heavybagzombie.provider.BagZombieContract.FightTable;
 import static playposse.com.heavybagzombie.provider.BagZombieContract.HitRecordTable;
+import static playposse.com.heavybagzombie.provider.BagZombieContract.ResetFightStatsAction;
 import static playposse.com.heavybagzombie.provider.BagZombieContract.SaveHitAction;
 import static playposse.com.heavybagzombie.provider.BagZombieContract.SaveMissAction;
+import static playposse.com.heavybagzombie.provider.BagZombieContract.SaveTimeoutAction;
 
 /**
  * A {@link ContentProvider} that provides information about the current fight.
@@ -27,6 +27,8 @@ public class BagZombieContentProvider extends ContentProvider {
     private static final int HIT_RECORD_TABLE_CODE = 2;
     private static final int SAVE_HIT_CODE = 3;
     private static final int SAVE_MISS_CODE = 4;
+    private static final int SAVE_TIMEOUT_CODE = 5;
+    private static final int RESET_FIGHT_STATS_CODE = 6;
 
     private final UriMatcher uriMatcher;
 
@@ -41,6 +43,8 @@ public class BagZombieContentProvider extends ContentProvider {
         uriMatcher.addURI(BagZombieContract.AUTHORITY, HitRecordTable.PATH, HIT_RECORD_TABLE_CODE);
         uriMatcher.addURI(BagZombieContract.AUTHORITY, SaveHitAction.PATH, SAVE_HIT_CODE);
         uriMatcher.addURI(BagZombieContract.AUTHORITY, SaveMissAction.PATH, SAVE_MISS_CODE);
+        uriMatcher.addURI(BagZombieContract.AUTHORITY, SaveTimeoutAction.PATH, SAVE_TIMEOUT_CODE);
+        uriMatcher.addURI(BagZombieContract.AUTHORITY, ResetFightStatsAction.PATH, RESET_FIGHT_STATS_CODE);
     }
 
     @Override
@@ -101,6 +105,19 @@ public class BagZombieContentProvider extends ContentProvider {
             case SAVE_MISS_CODE:
                 missCount++;
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
+                break;
+            case SAVE_TIMEOUT_CODE:
+                timeoutCount++;
+                getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
+                break;
+            case RESET_FIGHT_STATS_CODE:
+                hitCount = 0;
+                missCount = 0;
+                timeoutCount = 0;
+                hitRecords.clear();
+
+                getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(HitRecordTable.CONTENT_URI, null);
                 break;
         }
 
