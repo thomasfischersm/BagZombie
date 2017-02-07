@@ -94,10 +94,10 @@ public class BagZombieContentProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         switch (uriMatcher.match(uri)) {
             case SAVE_HIT_CODE:
-                String command = values.getAsString(SaveHitAction.COMMAND_COLUMN);
+                String hitCommand = values.getAsString(SaveHitAction.COMMAND_COLUMN);
                 int delay = values.getAsInteger(SaveHitAction.DELAY_COLUMN);
                 hitCount++;
-                hitRecords.add(new HitRecord(command, delay));
+                hitRecords.add(new HitRecord(hitCommand, delay));
 
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
                 getContext().getContentResolver().notifyChange(HitRecordTable.CONTENT_URI, null);
@@ -107,7 +107,10 @@ public class BagZombieContentProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
                 break;
             case SAVE_TIMEOUT_CODE:
+                String missCommand = values.getAsString(SaveTimeoutAction.COMMAND_COLUMN);
                 timeoutCount++;
+                hitRecords.add(new HitRecord(missCommand, -1));
+
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
                 break;
             case RESET_FIGHT_STATS_CODE:

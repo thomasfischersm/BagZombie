@@ -185,8 +185,17 @@ public class FightActivity extends AppCompatActivity {
                     TextView reactionTimeTextView =
                             (TextView) rootView.findViewById(R.id.reactionTimeTextView);
 
-                    commandTextView.setText(cursor.getString(cursor.getColumnIndex(HitRecordTable.COMMAND_COLUMN)));
-                    reactionTimeTextView.setText("" + cursor.getInt(cursor.getColumnIndex(HitRecordTable.DELAY_COLUMN)));
+                    String commandStr =
+                            cursor.getString(cursor.getColumnIndex(HitRecordTable.COMMAND_COLUMN));
+                    commandTextView.setText(commandStr);
+
+                    int reactionTime =
+                            cursor.getInt(cursor.getColumnIndex(HitRecordTable.DELAY_COLUMN));
+                    if (reactionTime >= 0) {
+                        reactionTimeTextView.setText("" + reactionTime);
+                    } else {
+                        reactionTimeTextView.setText("Missed");
+                    }
                 }
             });
         }
