@@ -1,13 +1,27 @@
 <resources>
-    <string name="app_name">Heavy Bag Zombie</string>
+    <string name="app_name">Bag Zombie</string>
 
-    <!-- Settings activity -->
+    <!-- Main activity -->
+    <string name="main_instruction">How to use:\n1. Find a quiet heavy bag.\n2. Put on headphones.\n3. Calibrate your microphone sensitivity.\n4. Start a fight in the app.\n5. Listen for punch commands.\n6. Punch.\n7. The microphone registers the sound of your punches.</string>
+    <string name="calibrate_microphone_button">Calibrate microphone</string>
+    <string name="manual_fight_button">Custom fight</string>
+
+    <!-- Microphone calibration activity -->
     <string name="sensitivity_legend">Sensitivity of peak detector applied to broadband detection function (%).</string>
     <string name="threshold_legend">Energy rise within a frequency bin necessary to count toward broadband total (dB).</string>
+    <string name="microphone_calibration_tips">Tips:\n- Wear headphones to avoid sound feedback.\n-The first slider gets more sensitive to the left. The second gets more sensitive to the right.\n-Avoid any loud sounds other than punching, e.g. sneakers squeaking.\n- If you are in a noisy environment with lots of other boxes, this won\'t work.</string>
 
-    <!-- Fight activity -->
+    <!-- Random fight activity -->
     <string name="hit_count_label">Hits</string>
     <string name="miss_count_label">Misses</string>
     <string name="timeout_count_label">Timeout</string>
+    <string name="reaction_time">%1$d ms</string>
     <string name="timeout_reaction_time_constant">Timeout</string>
+
+    <!-- Manual fight activity -->
+    <string name="round_count_label"># of rounds</string>
+    <string name="round_duration_label">Round duration (in seconds)</string>
+    <string name="rest_duration_label">Rest duration (in seconds)</string>
+    <string name="punch_combinations_label">Punch combinations</string>
+    <string name="clear_punches_link_label">Clear</string>
 </resources>

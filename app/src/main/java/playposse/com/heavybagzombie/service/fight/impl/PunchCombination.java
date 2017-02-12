@@ -15,6 +15,8 @@ import static playposse.com.heavybagzombie.provider.BagZombieContract.SaveHitAct
 public class PunchCombination {
 
     private final VocalPlayer.Message[] commands;
+    private final long delay;
+    private final long individualTimeout;
     private final int[] reactionTimes;
 
     private int playIndex = 0;
@@ -23,8 +25,10 @@ public class PunchCombination {
     private Long startTime;
     private Long endTime;
 
-    public PunchCombination(VocalPlayer.Message[] commands) {
+    public PunchCombination(VocalPlayer.Message[] commands, long delay, long individualTimeout) {
         this.commands = commands;
+        this.delay = delay;
+        this.individualTimeout = individualTimeout;
 
         reactionTimes = new int[4];
     }
@@ -86,5 +90,17 @@ public class PunchCombination {
 
     public long getOverallReactionTime() {
         return endTime - startTime;
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public long getIndividualTimeout() {
+        return individualTimeout;
+    }
+
+    public PunchCombination getCopy(long delay, long individualTimeout) {
+        return new PunchCombination(commands, delay, individualTimeout);
     }
 }

@@ -19,6 +19,7 @@ import playposse.com.heavybagzombie.R;
 /**
  * An {@link android.app.Activity} that creates a fight with random commands.
  */
+@Deprecated
 public class RandomFightActivity extends AppCompatActivity {
 
     private static final String LOG_CAT = RandomFightActivity.class.getSimpleName();

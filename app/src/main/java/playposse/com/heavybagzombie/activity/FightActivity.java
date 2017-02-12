@@ -28,6 +28,7 @@ import playposse.com.heavybagzombie.service.fight.impl.RandomFightSimulation;
 import static playposse.com.heavybagzombie.provider.BagZombieContract.FightTable;
 import static playposse.com.heavybagzombie.provider.BagZombieContract.HitRecordTable;
 
+@Deprecated
 public class FightActivity extends AppCompatActivity {
 
     private static final String LOG_CAT = FightActivity.class.getSimpleName();
@@ -188,9 +189,12 @@ public class FightActivity extends AppCompatActivity {
                     commandTextView.setText(commandStr);
 
                     int reactionTime =
-                            cursor.getInt(cursor.getColumnIndex(HitRecordTable.OVERALL_REACTION_TIME_COLUMN));
+                            cursor.getInt(
+                                    cursor.getColumnIndex(
+                                            HitRecordTable.OVERALL_REACTION_TIME_COLUMN));
                     if (reactionTime >= 0) {
-                        reactionTimeTextView.setText("" + reactionTime);
+                        reactionTimeTextView.setText(
+                                getString(R.string.reaction_time, reactionTime));
                     } else {
                         reactionTimeTextView.setText(R.string.timeout_reaction_time_constant);
                     }

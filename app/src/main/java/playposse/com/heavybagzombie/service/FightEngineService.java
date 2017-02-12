@@ -29,6 +29,7 @@ public class FightEngineService extends Service implements FightEngine, FightEng
     @Override
     public void startFight(FightSimulation fightSimulation) {
         stopFight();
+        this.fightSimulation = fightSimulation;
         fightSimulation.startFight(this);
         Log.i(LOG_CAT, "Service has started fight.");
     }

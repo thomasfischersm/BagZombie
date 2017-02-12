@@ -53,38 +53,12 @@ public abstract class AbstractFightSimulation implements FightSimulation {
         fightStatsSaver = new FightStatsSaver(fightEngineCallback.getApplicationContext());
         timer = new Timer();
 
-        timer.schedule(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        dispatcher.stop();
-                        isFightActive = false;
-                        onFightDone();
-                    }
-                },
-                duration);
-
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(SAMPLE_RATE, BUFFER_SIZE, 0);
 
         OnsetHandler onsetHandler = new OnsetHandler() {
             @Override
             public void handleOnset(double time, double salience) {
-                long now = System.currentTimeMillis();
-                if ((punchCombination != null) && punchCombination.hasStarted()) {
-                    Log.i(LOG_CAT, "Register hit for command "
-                            + punchCombination.getCommandString());
-                    punchCombination.recordReactionTime();
-
-                    if (!punchCombination.canRecordMoreReactionTimes()) {
-                        punchCombination.recordEndTime();
-                        timeoutTask.cancel();
-                        onScoreHit(punchCombination);
-                    } else {
-                        scheduleTimeoutTask();
-                    }
-                } else {
-                    onScoreMiss();
-                }
+                handleBangDetected();
             }
         };
         PercussionOnsetDetector percussionOnsetDetector = new PercussionOnsetDetector(
@@ -101,9 +75,29 @@ public abstract class AbstractFightSimulation implements FightSimulation {
         onFightStart();
     }
 
+    private void handleBangDetected() {
+        if ((punchCombination != null) && punchCombination.hasStarted()) {
+            Log.i(LOG_CAT, "Register hit for command "
+                    + punchCombination.getCommandString());
+            punchCombination.recordReactionTime();
+
+            if (!punchCombination.canRecordMoreReactionTimes()) {
+                punchCombination.recordEndTime();
+                timeoutTask.cancel();
+                onScoreHit(punchCombination);
+            } else {
+                scheduleTimeoutTask();
+            }
+        } else {
+            onScoreMiss();
+        }
+    }
+
     @Override
     public final void stopFight() {
-        dispatcher.stop();
+        if (!dispatcher.isStopped()) {
+            dispatcher.stop();
+        }
         timer.cancel();
         isFightActive = false;
         onFightAborted();
@@ -197,6 +191,26 @@ public abstract class AbstractFightSimulation implements FightSimulation {
 
     protected boolean isFightActive() {
         return isFightActive;
+    }
+
+    @Override
+    public void onRoundStart() {
+        isFightActive = true;
+        onFightStart();
+    }
+
+    @Override
+    public void onRoundEnd() {
+
+    }
+
+    @Override
+    public void onLastRoundEnd() {
+        if ((dispatcher != null) && !dispatcher.isStopped()) {
+            dispatcher.stop();
+        }
+        isFightActive = false;
+        onFightDone();
     }
 
     protected abstract void onFightStart();

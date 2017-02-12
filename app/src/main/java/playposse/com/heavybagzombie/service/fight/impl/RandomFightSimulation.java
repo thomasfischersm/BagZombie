@@ -1,6 +1,5 @@
 package playposse.com.heavybagzombie.service.fight.impl;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.Random;
@@ -78,10 +77,11 @@ public class RandomFightSimulation extends AbstractFightSimulation {
 
         VocalPlayer.Message command = pickRandomPunch();
         VocalPlayer.Message[] commands = {command};
-        PunchCombination punchCombination = new PunchCombination(commands);
+        // DYSFUNCTIONAL
+//        PunchCombination punchCombination = new PunchCombination(commands, delay, individualTimeout);
 
-        scheduleCommand(punchCombination, delay, delay + (COMMAND_TIMEOUT));
-        Log.i(LOG_CAT, "Issued command " + punchCombination.getCommandString());
+//        scheduleCommand(punchCombination, delay, delay + (COMMAND_TIMEOUT));
+//        Log.i(LOG_CAT, "Issued command " + punchCombination.getCommandString());
     }
 
     private VocalPlayer.Message pickRandomPunch() {
