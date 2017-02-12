@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="playposse.com.heavybagzombie">
+    package="com.playposse.heavybagzombie">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
-        android:name=".BagZombieApplication"
+        android:name="com.playposse.heavybagzombie.BagZombieApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <service android:name=".service.FightEngineService" />
+        <service android:name="com.playposse.heavybagzombie.service.FightEngineService" />
 
         <provider
-            android:name=".provider.BagZombieContentProvider"
+            android:name="com.playposse.heavybagzombie.provider.BagZombieContentProvider"
             android:authorities="com.playposse.heavybagzombie" />
 
         <activity
-            android:name=".activity.MicrophoneCalibrationActivity"
+            android:name="com.playposse.heavybagzombie.activity.MicrophoneCalibrationActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName="com.playposse.heavybagzombie.activity.MainActivity" />
         <activity
-            android:name=".activity.ManualFightActivity"
+            android:name="com.playposse.heavybagzombie.activity.ManualFightActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName="com.playposse.heavybagzombie.activity.MainActivity" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name="com.playposse.heavybagzombie.activity.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
