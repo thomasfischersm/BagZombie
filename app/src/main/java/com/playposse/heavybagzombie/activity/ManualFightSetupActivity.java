@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.playposse.heavybagzombie.BagZombiePreferences;
 import com.playposse.heavybagzombie.R;
+import com.playposse.heavybagzombie.util.IntentParameters;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,12 +117,21 @@ public class ManualFightSetupActivity extends ParentActivity {
                 rebuildComboGrid();
             }
         });
+
+        startFightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(IntentParameters.createManualFightIntent(getApplicationContext()));
+            }
+        });
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        
+
+        // When rotating the phone, the combo EditText doesn't receive a focus lost event to save
+        // the last change.
         saveCustomPunchesToPreferences();
     }
 

@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.playposse.heavybagzombie.service.fight.FightEngineCallback;
 import com.playposse.heavybagzombie.service.fight.FightSimulation;
+import com.playposse.heavybagzombie.service.fight.v2.FightSimulationV2;
+import com.playposse.heavybagzombie.service.fight.v2.FightSimulatorV2;
 
 /**
  * A {@link android.app.Service} that records audio to detect when the heavy bag is hit and
@@ -18,7 +20,8 @@ public class FightEngineService extends Service implements FightEngine, FightEng
 
     private static final String LOG_CAT = FightEngineService.class.getSimpleName();
 
-    private FightSimulation fightSimulation;
+    private FightSimulationV2 fightSimulation;
+    private FightSimulatorV2 fightSimulator;
 
     @Nullable
     @Override
@@ -27,17 +30,19 @@ public class FightEngineService extends Service implements FightEngine, FightEng
     }
 
     @Override
-    public void startFight(FightSimulation fightSimulation) {
+    public void startFight(FightSimulationV2 fightSimulation) {
         stopFight();
         this.fightSimulation = fightSimulation;
-        fightSimulation.startFight(this);
+
+        fightSimulator = new FightSimulatorV2(this, fightSimulation);
+        fightSimulator.start();
         Log.i(LOG_CAT, "Service has started fight.");
     }
 
     @Override
     public void stopFight() {
-        if (fightSimulation != null) {
-            fightSimulation.stopFight();
+        if (fightSimulator != null) {
+            fightSimulator.stop();
         }
     }
 

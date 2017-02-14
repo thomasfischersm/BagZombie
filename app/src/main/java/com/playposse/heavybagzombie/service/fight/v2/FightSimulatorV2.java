@@ -20,17 +20,18 @@ public class FightSimulatorV2 implements FightTimerCallbackV2, PunchTimerCallbac
     public FightSimulatorV2(Context context, FightSimulationV2 fightSimulation) {
         this.fightSimulation = fightSimulation;
 
+        fightStatsSaver = new FightStatsSaver(context);
+
         fightTimer = new FightTimerV2(
                 fightSimulation.getRoundTime(),
                 fightSimulation.getRestTime(),
                 fightSimulation.getMaxRound(),
+                fightStatsSaver,
                 this);
 
         vocalQueue = new VocalQueueV2(context);
 
         punchTimer = new PunchTimerV2(context, vocalQueue, this);
-
-        fightStatsSaver = new FightStatsSaver(context);
 
         FightContextV2 fightContext =
                 new FightContextV2(fightTimer, punchTimer, vocalQueue, fightStatsSaver);

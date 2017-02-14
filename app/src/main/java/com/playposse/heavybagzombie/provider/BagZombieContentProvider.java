@@ -14,9 +14,11 @@ import java.util.List;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.HitRecordTable;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.ResetFightStatsAction;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveHitAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveMissAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveTimeoutAction;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction.NO_FIGHT_STATE;
 
 /**
  * A {@link ContentProvider} that provides information about the current fight.
@@ -29,12 +31,16 @@ public class BagZombieContentProvider extends ContentProvider {
     private static final int SAVE_MISS_CODE = 4;
     private static final int SAVE_TIMEOUT_CODE = 5;
     private static final int RESET_FIGHT_STATS_CODE = 6;
+    private static final int UPDATE_FIGHT_STATE_CODE = 6;
 
     private final UriMatcher uriMatcher;
 
     private int hitCount = 0;
     private int missCount = 0;
     private int timeoutCount = 0;
+    private int fightState = NO_FIGHT_STATE;
+    private int fightTimer = 0;
+    private int currentRound = 0;
     private List<HitRecord> hitRecords = new ArrayList<>();
 
     public BagZombieContentProvider() {
@@ -45,6 +51,7 @@ public class BagZombieContentProvider extends ContentProvider {
         uriMatcher.addURI(BagZombieContract.AUTHORITY, SaveMissAction.PATH, SAVE_MISS_CODE);
         uriMatcher.addURI(BagZombieContract.AUTHORITY, SaveTimeoutAction.PATH, SAVE_TIMEOUT_CODE);
         uriMatcher.addURI(BagZombieContract.AUTHORITY, ResetFightStatsAction.PATH, RESET_FIGHT_STATS_CODE);
+        uriMatcher.addURI(BagZombieContract.AUTHORITY, UpdateFightStateAction.PATH, UPDATE_FIGHT_STATE_CODE);
     }
 
     @Override
@@ -66,7 +73,13 @@ public class BagZombieContentProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case FIGHT_TABLE_CODE:
                 cursor = new MatrixCursor(BagZombieContract.FightTable.COLUMN_NAMES, 1);
-                cursor.addRow(new Object[]{hitCount, missCount, timeoutCount});
+                cursor.addRow(new Object[]{
+                        hitCount,
+                        missCount,
+                        timeoutCount,
+                        fightState,
+                        fightTimer,
+                        currentRound});
                 break;
             case HIT_RECORD_TABLE_CODE:
                 cursor = new MatrixCursor(BagZombieContract.HitRecordTable.COLUMN_NAMES, 1);
@@ -134,6 +147,9 @@ public class BagZombieContentProvider extends ContentProvider {
                 hitCount = 0;
                 missCount = 0;
                 timeoutCount = 0;
+                fightState = NO_FIGHT_STATE;
+                fightTimer = 0;
+                currentRound = 0;
                 hitRecords.clear();
 
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
@@ -151,18 +167,16 @@ public class BagZombieContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        Integer hitIncrement = values.getAsInteger(FightTable.HIT_COUNT_COLUMN);
-        if (hitIncrement != null) {
-            hitCount += hitIncrement;
+        switch (uriMatcher.match(uri)) {
+            case UPDATE_FIGHT_STATE_CODE:
+                fightState = values.getAsInteger(UpdateFightStateAction.FIGHT_STATE_COLUMN);
+                fightTimer = values.getAsInteger(UpdateFightStateAction.TIMER_COLUMN);
+                currentRound = values.getAsInteger(UpdateFightStateAction.CURRENT_ROUND_COLUMN);
+
+                getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
+                return 1;
         }
 
-        Integer missIncrement = values.getAsInteger(FightTable.MISS_COUNT_COLUMN);
-        if (missIncrement != null) {
-            missCount += missIncrement;
-        }
-
-        getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
-
-        return 1;
+        return 0;
     }
 }

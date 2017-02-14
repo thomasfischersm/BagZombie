@@ -4,12 +4,17 @@ import android.content.ContentValues;
 
 import com.playposse.heavybagzombie.VocalPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveHitAction;
 
 /**
  * A combination of punch instructions.
  */
 public class PunchCombination {
+
+    public static final String SPACE_SEPERATOR = " ";
 
     private final VocalPlayer.Message[] commands;
     private final long delay;
@@ -99,5 +104,40 @@ public class PunchCombination {
 
     public PunchCombination getCopy(long delay, long individualTimeout) {
         return new PunchCombination(commands, delay, individualTimeout);
+    }
+
+    public static List<PunchCombination> toList(String[] punchCombinationStrs) {
+        List<PunchCombination> punchCombinations = new ArrayList<>(punchCombinationStrs.length);
+        for (String str : punchCombinationStrs) {
+            String[] digits = str.split(SPACE_SEPERATOR);
+            VocalPlayer.Message[] commands = new VocalPlayer.Message[digits.length];
+            for (int i = 0; i < digits.length; i++) {
+                switch (digits[i]) {
+                    case "1":
+                        commands[i] = VocalPlayer.Message.one;
+                        break;
+                    case "2":
+                        commands[i] = VocalPlayer.Message.two;
+                        break;
+                    case "3":
+                        commands[i] = VocalPlayer.Message.three;
+                        break;
+                    case "4":
+                        commands[i] = VocalPlayer.Message.four;
+                        break;
+                    case "5":
+                        commands[i] = VocalPlayer.Message.five;
+                        break;
+                    case "6":
+                        commands[i] = VocalPlayer.Message.six;
+                        break;
+                    default:
+                        commands[i] = VocalPlayer.Message.one;
+                        break;
+                }
+            }
+            punchCombinations.add(new PunchCombination(commands, 0, 0));
+        }
+        return punchCombinations;
     }
 }

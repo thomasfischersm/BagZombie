@@ -64,7 +64,7 @@ public class FightActivity extends AppCompatActivity {
                 Log.i(LOG_CAT, "Gott start button click.");
                 if (fightEngine != null) {
                     Log.i(LOG_CAT, "Telling service to start the fight.");
-                    fightEngine.startFight(new RandomFightSimulation(60_000));
+//                    fightEngine.startFight(new RandomFightSimulation(60_000));
                 }
             }
         });

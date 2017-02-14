@@ -26,9 +26,9 @@ public final class BagZombiePreferences {
     private static final String CUSTOM_COMBO_CHOICE_KEY = "customComboChoice";
     private static final String CUSTOM_COMBO_SET_KEY = "customComboSet";
 
-    private static final int DEFAULT_ROUND_COUNT = 3;
-    private static final int DEFAULT_ROUND_DURATION = 60;
-    private static final int DEFAULT_REST_DURATION = 30;
+    public static final int DEFAULT_ROUND_COUNT = 3;
+    public static final int DEFAULT_ROUND_DURATION = 60;
+    public static final int DEFAULT_REST_DURATION = 30;
     private static final int DEFAULT_CUSTOM_COMBO_CHOICE = 0;
 
     private static final String NULL_STRING = "-1";
