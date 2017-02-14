@@ -8,7 +8,6 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -19,7 +18,11 @@ import android.widget.TextView;
 import com.playposse.heavybagzombie.BagZombiePreferences;
 import com.playposse.heavybagzombie.R;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public class ManualFightSetupActivity extends ParentActivity {
@@ -115,12 +118,67 @@ public class ManualFightSetupActivity extends ParentActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        
+        saveCustomPunchesToPreferences();
+    }
+
     private void rebuildComboGrid() {
         customPunchesGrid.removeAllViews();
-        for (String combo : BagZombiePreferences.getCustomComboSet(this)) {
+        List<String> customComboList =
+                new ArrayList<>(BagZombiePreferences.getCustomComboSet(this));
+        Collections.sort(customComboList);
+        for (String combo : customComboList) {
             addCustomPunchEditText(combo);
         }
         addCustomPunchEditText(""); // Blank one for user to add a new combo
+
+        recalculateCustomPunchesGridColumnCount();
+    }
+
+    private void recalculateCustomPunchesGridColumnCount() {
+        customPunchesGrid.post(new Runnable() {
+            @Override
+            public void run() {
+                int childCount = customPunchesGrid.getChildCount();
+                if (childCount > 0) {
+                    // Calculate column count.
+                    View lastChild = customPunchesGrid.getChildAt(childCount - 1);
+                    int childWidth = lastChild.getWidth();
+                    int gridWidth = customPunchesGrid.getWidth();
+                    int columnCount = gridWidth / childWidth;
+                    if (customPunchesGrid.getColumnCount() == columnCount) {
+                        return;
+                    }
+
+                    // Remove children if the column count change requires a layout change.
+                    // GridLayout has a limitation where it doesn't smartly lay out rows again.
+                    List<View> children = new LinkedList<>();
+                    if (columnCount < customPunchesGrid.getChildCount()) {
+                        while (customPunchesGrid.getChildCount() > 0) {
+                            children.add(customPunchesGrid.getChildAt(0));
+                            customPunchesGrid.removeViewAt(0);
+                        }
+                    }
+
+                    // Set column count.
+                    customPunchesGrid.setColumnCount(columnCount);
+
+                    // Re-attach children
+                    while (children.size() > 0) {
+                        View child = children.remove(0);
+//                        GridLayout.LayoutParams lp =
+//                                (GridLayout.LayoutParams) child.getLayoutParams();
+//                        lp.columnSpec = GridLayout.UNDEFINED;
+//                        lp.rowSpec = GridLayout.UNDEFINED;
+                        child.setLayoutParams(new GridLayout.LayoutParams());
+                        customPunchesGrid.addView(child);
+                    }
+                }
+            }
+        });
     }
 
     private void addCustomPunchEditText(String combo) {
@@ -128,6 +186,7 @@ public class ManualFightSetupActivity extends ParentActivity {
         customPunchEditText.setText(combo);
         customPunchEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
         customPunchEditText.setKeyListener(DigitsKeyListener.getInstance("123456 "));
+        customPunchEditText.setHint(R.string.custom_combo_hint);
         customPunchesGrid.addView(customPunchEditText);
 
         customPunchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -207,7 +266,7 @@ public class ManualFightSetupActivity extends ParentActivity {
         str = str.replaceAll("[,;]", " "); // Convert separators to spaces.
         str = str.replaceAll("[^123456 ]", " "); // Remove any non-numbers because they are noise.
         str = str.replaceAll(" +", " "); // Collapse all separators to a single space.
-        str = str.replaceAll("([123456])+", "$1"); // In multi-digits only the first digit survives.
+        str = str.replaceAll("([123456])(?=[123456])", "$1 "); // Add spaces between digits.
 
         int maxLength = "X X X X".length();
         if (str.length() > maxLength) {

@@ -24,6 +24,7 @@
     <string name="rest_duration_label">Rest duration (in seconds)</string>
     <string name="punch_combinations_label">Punch combinations</string>
     <string name="clear_punches_link_label">Clear</string>
+    <string name="custom_combo_hint">e.g. \'1 2\'</string>
     <string-array name="punch_combinations_array">
         <item>Single punches</item>
         <item>Two punch combos</item>

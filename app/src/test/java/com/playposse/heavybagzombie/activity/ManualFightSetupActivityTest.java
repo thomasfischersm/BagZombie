@@ -26,7 +26,7 @@ public class ManualFightSetupActivityTest {
 
         // Verify single character input.
         assertValidCombo("1", "1");
-        assertValidCombo("11111", "1");
+        assertValidCombo("11111", "1 1 1 1");
         assertValidCombo("   1   ", "1");
         assertValidCombo("7", "");
         assertValidCombo("71a;\t\n  ", "1");
