@@ -24,4 +24,11 @@
     <string name="rest_duration_label">Rest duration (in seconds)</string>
     <string name="punch_combinations_label">Punch combinations</string>
     <string name="clear_punches_link_label">Clear</string>
+    <string-array name="punch_combinations_array">
+        <item>Single punches</item>
+        <item>Two punch combos</item>
+        <item>Popular four combos</item>
+        <item>Every combo and the kitchen sink</item>
+        <item>Custom</item>
+    </string-array>
 </resources>

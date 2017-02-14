@@ -23,7 +23,7 @@
             android:launchMode="singleTop"
             android:parentActivityName="com.playposse.heavybagzombie.activity.MainActivity" />
         <activity
-            android:name="com.playposse.heavybagzombie.activity.ManualFightActivity"
+            android:name="com.playposse.heavybagzombie.activity.ManualFightSetupActivity"
             android:launchMode="singleTop"
             android:parentActivityName="com.playposse.heavybagzombie.activity.MainActivity" />
         <activity

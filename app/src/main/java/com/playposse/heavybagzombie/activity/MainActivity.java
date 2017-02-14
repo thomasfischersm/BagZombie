@@ -27,6 +27,6 @@ public class MainActivity extends ParentActivity {
         calibrateMicrophoneButton.setOnClickListener(new ClickListenerToOpenActivity(
                 MicrophoneCalibrationActivity.class));
         manualFightButton.setOnClickListener(new ClickListenerToOpenActivity(
-                ManualFightActivity.class));
+                ManualFightSetupActivity.class));
     }
 }
