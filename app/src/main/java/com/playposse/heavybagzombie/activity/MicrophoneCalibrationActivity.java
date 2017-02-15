@@ -21,7 +21,7 @@ import be.tarsos.dsp.pitch.PitchProcessor;
 import com.playposse.heavybagzombie.BagZombiePreferences;
 import com.playposse.heavybagzombie.R;
 
-public class MicrophoneCalibrationActivity extends ParentActivity {
+public class MicrophoneCalibrationActivity extends PermittedParentActivity {
 
     private static final String LOG_CAT = MicrophoneCalibrationActivity.class.getSimpleName();
 
@@ -91,10 +91,12 @@ public class MicrophoneCalibrationActivity extends ParentActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!checkMicrophonePermission()) {
-            return;
+        if (checkMicrophonePermission()) {
+            startSlapDetection();
         }
+    }
 
+    private void startSlapDetection() {
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(SAMPLE_RATE, BUFFER_SIZE,0);
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
@@ -126,19 +128,9 @@ public class MicrophoneCalibrationActivity extends ParentActivity {
         }
     }
 
-    private boolean checkMicrophonePermission() {
-        int permissionCheck =
-                ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO);
-
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-
-        // Need to request permissions.
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.RECORD_AUDIO},
-                1);
-        return false;
+    @Override
+    protected void onMicrophonePermissionHasBeenGranted() {
+        startSlapDetection();
     }
 
     private void resetSlapDetector() {

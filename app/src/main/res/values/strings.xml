@@ -32,4 +32,7 @@
         <item>Every combo and the kitchen sink</item>
         <item>Custom</item>
     </string-array>
+
+    <!-- Activity that tells the user that the microphone permission is necessary -->
+    <string name="microphone_permission_rational">This app calls out random boxing combinations and registers when your glove hits the heavy bag. To register the hit, the app uses the microphone to listen for the bang sound. If you don\'t grant microphone permissions, this app cannot function.\n\nPlease tap back, start over, and grant the microphone permission.</string>
 </resources>

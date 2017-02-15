@@ -45,7 +45,8 @@ public class PunchTimerV2 {
     }
 
     private AudioDispatcher startAudioDispatcher(Context context) {
-        AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(SAMPLE_RATE, BUFFER_SIZE, 0);
+        AudioDispatcher dispatcher =
+                AudioDispatcherFactory.fromDefaultMicrophone(SAMPLE_RATE, BUFFER_SIZE, 0);
 
         OnsetHandler onsetHandler = new OnsetHandler() {
             @Override

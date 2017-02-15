@@ -158,6 +158,10 @@ public class ManualFightSetupActivity extends ParentActivity {
                     View lastChild = customPunchesGrid.getChildAt(childCount - 1);
                     int childWidth = lastChild.getWidth();
                     int gridWidth = customPunchesGrid.getWidth();
+                    if (childWidth == 0) {
+                        // The view is not attached.
+                        return;
+                    }
                     int columnCount = gridWidth / childWidth;
                     if (customPunchesGrid.getColumnCount() == columnCount) {
                         return;

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.playposse.heavybagzombie.BagZombiePreferences;
 import com.playposse.heavybagzombie.R;
+import com.playposse.heavybagzombie.service.FightEngine;
 import com.playposse.heavybagzombie.service.FightEngineService;
 import com.playposse.heavybagzombie.service.FightEngineServiceConnection;
 import com.playposse.heavybagzombie.service.fight.impl.ManualFightSimulationV2;
@@ -18,7 +19,9 @@ import com.playposse.heavybagzombie.util.IntentParameters;
 
 import java.util.List;
 
-public class ManualFightActivity extends ParentActivity {
+public class ManualFightActivity
+        extends PermittedParentActivity
+        implements FightEngineServiceConnection.Callback {
 
     private static final long DEFAULT_MAX_DELAY = 3_000;
     private static final long DEFAULT_INDIVIDUAL_TIMEOUT = 1_500;
@@ -28,7 +31,7 @@ public class ManualFightActivity extends ParentActivity {
     private TextView roundCountTextView;
     private TextView timerTextView;
 
-    private FightEngineServiceConnection serviceConnection = new FightEngineServiceConnection();
+    private FightEngineServiceConnection serviceConnection = new FightEngineServiceConnection(this);
 
     @Override
     protected int getLayoutResId() {
@@ -81,5 +84,19 @@ public class ManualFightActivity extends ParentActivity {
         super.onPause();
 
         unbindService(serviceConnection);
+    }
+
+    @Override
+    public void onFightEngineBound(FightEngine fightEngine) {
+        if (checkMicrophonePermission()) {
+            startFight();
+        }
+    }
+
+    @Override
+    protected void onMicrophonePermissionHasBeenGranted() {
+        if (serviceConnection.isConnected()) {
+            startFight();
+        }
     }
 }
