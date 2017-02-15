@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.playposse.heavybagzombie.BagZombiePreferences;
 import com.playposse.heavybagzombie.activity.ManualFightActivity;
+import com.playposse.heavybagzombie.service.PunchCombinationSets;
 
 import java.util.List;
 import java.util.Set;
@@ -22,14 +23,13 @@ public final class IntentParameters {
     private IntentParameters() {
     }
 
-    public static Intent createManualFightIntent(Context context) {
-
+    public static Intent createManualFightIntent(Context context, int punchCombinationIndex) {
         int roundCount = BagZombiePreferences.getCustomRoundCount(context);
         int roundDuration = BagZombiePreferences.getCustomRoundDuration(context);
         int restDuration = BagZombiePreferences.getCustomRestDuration(context);
-        Set<String> punchCombinationSet = BagZombiePreferences.getCustomComboSet(context);
         String[] punchCombinationsArray =
-                punchCombinationSet.toArray(new String[punchCombinationSet.size()]);
+                PunchCombinationSets.getPunchCombinations(context, punchCombinationIndex);
+
 
         Intent intent = new Intent(context, ManualFightActivity.class);
         intent.putExtra(ROUND_COUNT_EXTRA, roundCount);

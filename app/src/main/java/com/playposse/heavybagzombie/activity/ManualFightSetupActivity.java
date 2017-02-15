@@ -121,7 +121,9 @@ public class ManualFightSetupActivity extends ParentActivity {
         startFightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(IntentParameters.createManualFightIntent(getApplicationContext()));
+                startActivity(IntentParameters.createManualFightIntent(
+                        getApplicationContext(),
+                        combinationSpinner.getSelectedItemPosition()));
             }
         });
     }
@@ -183,10 +185,6 @@ public class ManualFightSetupActivity extends ParentActivity {
                     // Re-attach children
                     while (children.size() > 0) {
                         View child = children.remove(0);
-//                        GridLayout.LayoutParams lp =
-//                                (GridLayout.LayoutParams) child.getLayoutParams();
-//                        lp.columnSpec = GridLayout.UNDEFINED;
-//                        lp.rowSpec = GridLayout.UNDEFINED;
                         child.setLayoutParams(new GridLayout.LayoutParams());
                         customPunchesGrid.addView(child);
                     }

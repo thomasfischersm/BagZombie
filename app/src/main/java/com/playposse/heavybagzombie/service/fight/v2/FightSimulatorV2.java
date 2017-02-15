@@ -80,6 +80,7 @@ public class FightSimulatorV2 implements FightTimerCallbackV2, PunchTimerCallbac
     @Override
     public void onTimeout(PunchCombination punchCombination) {
         fightSimulation.scoreTimeout(punchCombination);
+        scheduleNextPunchCombination();
     }
 
     @Override

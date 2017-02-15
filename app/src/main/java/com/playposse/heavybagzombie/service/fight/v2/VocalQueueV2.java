@@ -52,12 +52,14 @@ public class VocalQueueV2 {
     private void playNextVocal() {
         Log.i(LOG_CAT, "Checking queue for next vocal to play.");
         if (taskQueue.isEmpty()) {
+            Log.i(LOG_CAT, "No more vocals in queue");
             isPlaying = false;
             return;
         }
 
         isPlaying = true;
         VocalTask task = taskQueue.get(0);
+        Log.i(LOG_CAT, "Playing next vocal: " + task);
         final VocalPlayer.Message message;
         if (task.getMessage() != null) {
             message = task.getMessage();
@@ -116,6 +118,18 @@ public class VocalQueueV2 {
 
         public VocalQueueCallbackV2 getCallback() {
             return callback;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("Vocal Task (");
+            if (punchCombination != null) {
+                sb.append("punch combination: " + punchCombination.getCommandString());
+            }
+            if (message != null) {
+                sb.append("message: " + message.name());
+            }
+            return sb.toString();
         }
     }
 }

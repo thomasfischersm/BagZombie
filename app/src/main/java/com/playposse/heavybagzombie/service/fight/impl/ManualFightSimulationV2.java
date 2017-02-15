@@ -84,7 +84,7 @@ public class ManualFightSimulationV2 implements FightSimulationV2 {
 
     @Override
     public void scoreHit(PunchCombination punchCombination) {
-        Log.i(LOG_CAT, "Scored hit for " + punchCombination);
+        Log.i(LOG_CAT, "Scored hit for " + punchCombination.getCommandString());
         fightContext.getFightStatsSaver().saveHit(punchCombination);
         if (punchCombination.getOverallReactionTime() <= heavyTimeout) {
             fightContext.getVocalQueue().scheduleVocal(VocalPlayer.Message.heavy);

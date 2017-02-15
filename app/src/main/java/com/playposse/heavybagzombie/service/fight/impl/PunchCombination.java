@@ -112,32 +112,38 @@ public class PunchCombination {
             String[] digits = str.split(SPACE_SEPERATOR);
             VocalPlayer.Message[] commands = new VocalPlayer.Message[digits.length];
             for (int i = 0; i < digits.length; i++) {
-                switch (digits[i]) {
-                    case "1":
-                        commands[i] = VocalPlayer.Message.one;
-                        break;
-                    case "2":
-                        commands[i] = VocalPlayer.Message.two;
-                        break;
-                    case "3":
-                        commands[i] = VocalPlayer.Message.three;
-                        break;
-                    case "4":
-                        commands[i] = VocalPlayer.Message.four;
-                        break;
-                    case "5":
-                        commands[i] = VocalPlayer.Message.five;
-                        break;
-                    case "6":
-                        commands[i] = VocalPlayer.Message.six;
-                        break;
-                    default:
-                        commands[i] = VocalPlayer.Message.one;
-                        break;
-                }
+                commands[i] = parseCommand(digits[i]);
             }
             punchCombinations.add(new PunchCombination(commands, 0, 0));
         }
         return punchCombinations;
+    }
+
+    private static VocalPlayer.Message parseCommand(String digit) {
+        VocalPlayer.Message command;
+        switch (digit) {
+            case "1":
+                command = VocalPlayer.Message.one;
+                break;
+            case "2":
+                command = VocalPlayer.Message.two;
+                break;
+            case "3":
+                command = VocalPlayer.Message.three;
+                break;
+            case "4":
+                command = VocalPlayer.Message.four;
+                break;
+            case "5":
+                command = VocalPlayer.Message.five;
+                break;
+            case "6":
+                command = VocalPlayer.Message.six;
+                break;
+            default:
+                command = VocalPlayer.Message.one;
+                break;
+        }
+        return command;
     }
 }

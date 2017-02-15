@@ -62,8 +62,8 @@ public class ManualFightActivity
 
         FightSimulationV2 fightSimulation = new ManualFightSimulationV2(
                 punchCombinations,
-                roundDuration,
-                restDuration,
+                roundDuration * 1_000,
+                restDuration * 1_000,
                 roundCount,
                 DEFAULT_MAX_DELAY,
                 DEFAULT_INDIVIDUAL_TIMEOUT,
