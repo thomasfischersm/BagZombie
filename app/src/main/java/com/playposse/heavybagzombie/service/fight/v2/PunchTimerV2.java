@@ -68,14 +68,14 @@ public class PunchTimerV2 {
         return dispatcher;
     }
 
-    public void stop() {
+    public synchronized void stop() {
         timer.cancel();
         if (dispatcher.isStopped()) {
             dispatcher.stop();
         }
     }
 
-    public void schedulePunchCombination(PunchCombination punchCombination) {
+    public synchronized void schedulePunchCombination(PunchCombination punchCombination) {
         Log.i(LOG_CAT, "Schedule punch combination: " + punchCombination.getCommandString());
 
         if (punchCombination == null) {
@@ -128,14 +128,14 @@ public class PunchTimerV2 {
         timer.schedule(lastTimeoutTask, punchCombination.getIndividualTimeout());
     }
 
-    private void handleTimeout() {
+    private synchronized void handleTimeout() {
         Log.i(LOG_CAT, "Timeout occurred for: " + punchCombination.getCommandString());
         PunchCombination lastPunchCombination = punchCombination;
         reset();
         callback.onTimeout(lastPunchCombination);
     }
 
-    private void handleBangDetected() {
+    private synchronized void handleBangDetected() {
         Log.i(LOG_CAT, "Bang detected!");
         if ((punchCombination == null) || !hasCommandBeenIssued) {
             Log.i(LOG_CAT, "Recorded miss");
@@ -154,7 +154,7 @@ public class PunchTimerV2 {
         }
     }
 
-    private void reset() {
+    private synchronized void reset() {
         Log.i(LOG_CAT, "Resetting PunchTimerV2");
         punchCombination = null;
         isTimeoutScheduled = false;

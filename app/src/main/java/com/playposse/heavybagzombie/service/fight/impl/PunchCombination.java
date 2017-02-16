@@ -1,6 +1,7 @@
 package com.playposse.heavybagzombie.service.fight.impl;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.playposse.heavybagzombie.VocalPlayer;
 
@@ -13,6 +14,8 @@ import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveHitAct
  * A combination of punch instructions.
  */
 public class PunchCombination {
+
+    private static final String LOG_CAT = PunchCombination.class.getSimpleName();
 
     public static final String SPACE_SEPERATOR = " ";
 
@@ -44,6 +47,8 @@ public class PunchCombination {
     }
 
     public VocalPlayer.Message getNextCommand() {
+        Log.i(LOG_CAT, "getNextCommand() PunchCombination state: " + getCommandString()
+                + " playIndex " + playIndex + ", length " + commands.length);
         if (playIndex < commands.length) {
             return commands[playIndex++];
         } else {
@@ -56,6 +61,8 @@ public class PunchCombination {
     }
 
     public boolean canPlayMoreCommands() {
+        Log.i(LOG_CAT, "canPlayMoreCommands() PunchCombination state: " + getCommandString()
+                + " playIndex " + playIndex + ", length " + commands.length);
         return playIndex < commands.length;
     }
 

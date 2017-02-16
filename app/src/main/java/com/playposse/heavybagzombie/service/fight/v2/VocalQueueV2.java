@@ -31,13 +31,19 @@ public class VocalQueueV2 {
         scheduleVocal(message, null);
     }
 
-    public void scheduleVocal(VocalPlayer.Message message, @Nullable VocalQueueCallbackV2 callback) {
+    public synchronized void scheduleVocal(
+            VocalPlayer.Message message,
+            @Nullable VocalQueueCallbackV2 callback) {
+
         Log.i(LOG_CAT, "Scheduled vocal: " + message.name());
         taskQueue.add(new VocalTask(message, null, callback));
         tickle();
     }
 
-    public void scheduleVocal(PunchCombination punchCombination, VocalQueueCallbackV2 callback) {
+    public synchronized void scheduleVocal(
+            PunchCombination punchCombination,
+            VocalQueueCallbackV2 callback) {
+
         Log.i(LOG_CAT, "Scheduled punch combination: " + punchCombination.getCommandString());
         taskQueue.add(new VocalTask(null, punchCombination, callback));
         tickle();
@@ -49,7 +55,7 @@ public class VocalQueueV2 {
         }
     }
 
-    private void playNextVocal() {
+    private synchronized void playNextVocal() {
         Log.i(LOG_CAT, "Checking queue for next vocal to play.");
         if (taskQueue.isEmpty()) {
             Log.i(LOG_CAT, "No more vocals in queue");
@@ -68,6 +74,8 @@ public class VocalQueueV2 {
             PunchCombination punchCombination = task.getPunchCombination();
             message = punchCombination.getNextCommand();
             if (!punchCombination.canPlayMoreCommands()) {
+                Log.i(LOG_CAT, "playNextVocal() finished playing this combination. "
+                        + punchCombination.hashCode());
                 taskQueue.remove(0);
             }
         }
