@@ -75,12 +75,20 @@ public class PunchTimerV2 {
         }
     }
 
-    public synchronized void schedulePunchCombination(PunchCombination punchCombination) {
-        Log.i(LOG_CAT, "Schedule punch combination: " + punchCombination.getCommandString());
+    private static int punchTaskId = 0;
+
+    public synchronized void schedulePunchCombination(final PunchCombination punchCombination) {
+        Log.i(LOG_CAT, "Schedule punch combination: " + punchCombination.getCommandString()
+                + " " + punchCombination.hashCode());
 
         if (punchCombination == null) {
             throw new IllegalStateException(
                     "Can't schedule a punch combination when another one is still running!");
+        }
+
+        if (dispatcher.isStopped()) {
+            // The round has already ended. Ignore this.
+            return;
         }
 
         this.punchCombination = punchCombination;
@@ -88,40 +96,66 @@ public class PunchTimerV2 {
         isTimeoutScheduled = false;
         hasCommandBeenIssued = false;
 
+        final int currentPunchTaskId = ++punchTaskId;
         lastPunchTask = new TimerTask() {
             @Override
             public void run() {
-                playPunchVocal();
+                Log.i(LOG_CAT, "TimerTask for vocal of punch woke up "
+                        + punchCombination.getCommandString() + " " + punchCombination.hashCode()
+                        + " taskid " + currentPunchTaskId);
+                playPunchVocal(currentPunchTaskId);
             }
         };
         timer.schedule(lastPunchTask, punchCombination.getDelay());
+        Log.i(LOG_CAT, "Scheduled TimerTask for punch vocal: "
+                + punchCombination.getCommandString() + " " + punchCombination.hashCode()
+                + " taskid " + currentPunchTaskId);
     }
 
-    private void playPunchVocal() {
-        Log.i(LOG_CAT, "Sending punch combination to the vocal queue" + punchCombination.getCommandString());
+    private synchronized void playPunchVocal(final int currentPunchTaskId) {
+        Log.i(LOG_CAT, "Sending punch combination to the vocal queue "
+                + punchCombination.getCommandString() + " " + punchCombination.hashCode()
+                + " taskid " + currentPunchTaskId);
         vocalQueue.scheduleVocal(
                 punchCombination,
                 new VocalQueueCallbackV2() {
                     @Override
                     public void onStartPlayback(VocalPlayer.Message message) {
                         Log.i(LOG_CAT, "PunchTimerV2.onStartPlayback returns for " + message.name());
-                        hasCommandBeenIssued = true;
+                        hasCommandBeenIssued = true; // TODO: Set this when the playback starts, not ends!
                         if (!isTimeoutScheduled) {
-                            scheduleTimeout();
+                            scheduleTimeout(currentPunchTaskId);
                             punchCombination.recordStartTime();
                         }
                     }
                 });
     }
 
-    private void scheduleTimeout() {
+    private synchronized void scheduleTimeout(final int currentPunchTaskId) {
+        Log.i(LOG_CAT, "Attempt to schedule timeout task "
+                + punchCombination.getCommandString() + " " + punchCombination.hashCode()
+                + " taskid " + currentPunchTaskId);
         if (lastTimeoutTask != null) {
             lastTimeoutTask.cancel();
         }
 
+        if (punchCombination == null) {
+            // The player already reacted. Skip the timeout.
+            return;
+        }
+
+        if (dispatcher.isStopped()) {
+            // The round has already ended. Ignore this.
+            return;
+        }
+        
         lastTimeoutTask = new TimerTask() {
             @Override
             public void run() {
+                Log.i(LOG_CAT, "timeout task woke up for "
+                        + punchCombination.getCommandString() + " " + punchCombination.hashCode()
+                        + " taskid " + currentPunchTaskId);
+
                 handleTimeout();
             }
         };
@@ -129,7 +163,8 @@ public class PunchTimerV2 {
     }
 
     private synchronized void handleTimeout() {
-        Log.i(LOG_CAT, "Timeout occurred for: " + punchCombination.getCommandString());
+        Log.i(LOG_CAT, "Timeout occurred for: " + punchCombination.getCommandString()
+            + " " + punchCombination.hashCode());
         PunchCombination lastPunchCombination = punchCombination;
         reset();
         callback.onTimeout(lastPunchCombination);
@@ -142,7 +177,6 @@ public class PunchTimerV2 {
             callback.onMiss();
         } else {
             Log.i(LOG_CAT, "Recorded hit");
-            scheduleTimeout();
             punchCombination.recordReactionTime();
 
             if (!punchCombination.canRecordMoreReactionTimes()) {
@@ -150,6 +184,8 @@ public class PunchTimerV2 {
                 PunchCombination lastPunchCombination = punchCombination;
                 reset();
                 callback.onHit(lastPunchCombination);
+            } else {
+                scheduleTimeout(-1);
             }
         }
     }
@@ -159,5 +195,13 @@ public class PunchTimerV2 {
         punchCombination = null;
         isTimeoutScheduled = false;
         hasCommandBeenIssued = false;
+
+        if (lastTimeoutTask != null) {
+            lastTimeoutTask.cancel();
+        }
+
+        if (lastPunchTask != null) {
+            lastPunchTask.cancel();
+        }
     }
 }

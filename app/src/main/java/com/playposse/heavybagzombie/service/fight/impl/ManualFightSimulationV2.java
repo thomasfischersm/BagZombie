@@ -79,6 +79,8 @@ public class ManualFightSimulationV2 implements FightSimulationV2 {
         int randomIndex = RANDOM.nextInt(punchCombinations.size());
         PunchCombination punchTemplate = punchCombinations.get(randomIndex);
         PunchCombination punchInstance = punchTemplate.getCopy(delay, individualTimeout);
+        Log.i(LOG_CAT, "Generated next punch combination: " + punchInstance.getCommandString()
+                + " " + punchInstance.hashCode());
         return punchInstance;
     }
 

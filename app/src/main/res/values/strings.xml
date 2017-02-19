@@ -18,7 +18,7 @@
     <string name="reaction_time">%1$d ms</string>
     <string name="timeout_reaction_time_constant">Timeout</string>
 
-    <!-- Manual fight activity -->
+    <!-- Manual fight setup activity -->
     <string name="round_count_label"># of rounds</string>
     <string name="round_duration_label">Round duration (in seconds)</string>
     <string name="rest_duration_label">Rest duration (in seconds)</string>
@@ -32,6 +32,13 @@
         <item>Every combo and the kitchen sink</item>
         <item>Custom</item>
     </string-array>
+
+    <!-- Manual fight activity -->
+    <string name="fight_state_none">Done</string>
+    <string name="fight_state_active">Active</string>
+    <string name="fight_state_rest">Rest</string>
+    <string name="round_counter">Round %1$d</string>
+    <string name="round_timer">%1$d:%2$02d</string>
 
     <!-- Activity that tells the user that the microphone permission is necessary -->
     <string name="microphone_permission_rational">This app calls out random boxing combinations and registers when your glove hits the heavy bag. To register the hit, the app uses the microphone to listen for the bang sound. If you don\'t grant microphone permissions, this app cannot function.\n\nPlease tap back, start over, and grant the microphone permission.</string>
