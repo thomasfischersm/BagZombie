@@ -38,6 +38,7 @@ public class PunchTimerV2 {
     private boolean hasCommandBeenIssued = false;
     private TimerTask lastPunchTask;
     private TimerTask lastTimeoutTask;
+    private boolean isStopped = false;
 
     public PunchTimerV2(Context context, VocalQueueV2 vocalQueue, PunchTimerCallbackV2 callback) {
         this.vocalQueue = vocalQueue;
@@ -69,6 +70,7 @@ public class PunchTimerV2 {
     }
 
     public synchronized void stop() {
+        isStopped = true;
         timer.cancel();
         if (dispatcher.isStopped()) {
             dispatcher.stop();
@@ -86,7 +88,7 @@ public class PunchTimerV2 {
                     "Can't schedule a punch combination when another one is still running!");
         }
 
-        if (dispatcher.isStopped()) {
+        if (isStopped) {
             // The round has already ended. Ignore this.
             return;
         }
@@ -144,11 +146,11 @@ public class PunchTimerV2 {
             return;
         }
 
-        if (dispatcher.isStopped()) {
+        if (isStopped) {
             // The round has already ended. Ignore this.
             return;
         }
-        
+
         lastTimeoutTask = new TimerTask() {
             @Override
             public void run() {

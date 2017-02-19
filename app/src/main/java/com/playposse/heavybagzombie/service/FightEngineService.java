@@ -30,7 +30,13 @@ public class FightEngineService extends Service implements FightEngine, FightEng
     }
 
     @Override
-    public void startFight(FightSimulationV2 fightSimulation) {
+    public void startFight(FightSimulationV2 fightSimulation, boolean force) {
+        if ((fightSimulator != null) && !force) {
+            // The activity may have only rotated. The intent may not be to actually start a new
+            // fight.
+            return;
+        }
+
         stopFight();
         this.fightSimulation = fightSimulation;
 
@@ -43,6 +49,7 @@ public class FightEngineService extends Service implements FightEngine, FightEng
     public void stopFight() {
         if (fightSimulator != null) {
             fightSimulator.stop();
+            fightSimulator = null;
         }
     }
 

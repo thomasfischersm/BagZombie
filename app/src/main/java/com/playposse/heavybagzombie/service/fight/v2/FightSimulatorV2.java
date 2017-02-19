@@ -73,19 +73,25 @@ public class FightSimulatorV2 implements FightTimerCallbackV2, PunchTimerCallbac
 
     @Override
     public void onHit(PunchCombination punchCombination) {
-        fightSimulation.scoreHit(punchCombination);
-        scheduleNextPunchCombination();
+        if (fightTimer.isActiveRound()) {
+            fightSimulation.scoreHit(punchCombination);
+            scheduleNextPunchCombination();
+        }
     }
 
     @Override
     public void onTimeout(PunchCombination punchCombination) {
-        fightSimulation.scoreTimeout(punchCombination);
-        scheduleNextPunchCombination();
+        if (fightTimer.isActiveRound()) {
+            fightSimulation.scoreTimeout(punchCombination);
+            scheduleNextPunchCombination();
+        }
     }
 
     @Override
     public void onMiss() {
-        fightSimulation.scoreMiss();
+        if (fightTimer.isActiveRound()) {
+            fightSimulation.scoreMiss();
+        }
     }
 
     private void scheduleNextPunchCombination() {

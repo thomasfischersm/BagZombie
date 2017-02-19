@@ -8,6 +8,6 @@ import com.playposse.heavybagzombie.service.fight.v2.FightSimulationV2;
  */
 public interface FightEngine {
 
-    void startFight(FightSimulationV2 fightSimulation);
+    void startFight(FightSimulationV2 fightSimulation, boolean force);
     void stopFight();
 }

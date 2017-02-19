@@ -83,7 +83,7 @@ public class ManualFightActivity
                 DEFAULT_MAX_DELAY,
                 DEFAULT_INDIVIDUAL_TIMEOUT,
                 DEFAULT_HEAVY_TIMEOUT);
-        serviceConnection.getFightEngine().startFight(fightSimulation);
+        serviceConnection.getFightEngine().startFight(fightSimulation, false);
     }
 
     @Override

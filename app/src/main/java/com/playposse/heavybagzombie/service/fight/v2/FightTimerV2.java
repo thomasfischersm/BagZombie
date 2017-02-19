@@ -132,4 +132,8 @@ public class FightTimerV2 {
 
         fightStatsSaver.updateFightState(fightState, secondsSincePeriodStart, currentRoundIndex);
     }
+
+    public boolean isActiveRound() {
+        return isActive;
+    }
 }
