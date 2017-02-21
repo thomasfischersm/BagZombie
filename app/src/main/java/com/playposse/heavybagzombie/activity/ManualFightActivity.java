@@ -1,5 +1,7 @@
 package com.playposse.heavybagzombie.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -7,6 +9,9 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +20,7 @@ import android.widget.TextView;
 import com.playposse.heavybagzombie.BagZombiePreferences;
 import com.playposse.heavybagzombie.R;
 import com.playposse.heavybagzombie.provider.BagZombieContract;
+import com.playposse.heavybagzombie.provider.RoundStatsRecord;
 import com.playposse.heavybagzombie.service.FightEngine;
 import com.playposse.heavybagzombie.service.FightEngineService;
 import com.playposse.heavybagzombie.service.FightEngineServiceConnection;
@@ -26,7 +32,10 @@ import com.playposse.heavybagzombie.util.IntentParameters;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ManualFightActivity
         extends PermittedParentActivity
@@ -39,10 +48,12 @@ public class ManualFightActivity
     private static final long DEFAULT_HEAVY_TIMEOUT = 500;
 
     private static final int FIGHT_STATE_LOADER = 1;
+    private static final int ROUND_STATS_LOADER = 2;
 
     private TextView fightStateTextView;
     private TextView roundCountTextView;
     private TextView timerTextView;
+    private ViewPager roundStatsViewPager;
 
     private FightEngineServiceConnection serviceConnection = new FightEngineServiceConnection(this);
 
@@ -58,8 +69,10 @@ public class ManualFightActivity
         fightStateTextView = (TextView) findViewById(R.id.fightStateTextView);
         roundCountTextView = (TextView) findViewById(R.id.roundCountTextView);
         timerTextView = (TextView) findViewById(R.id.timerTextView);
+        roundStatsViewPager = (ViewPager) findViewById(R.id.roundStatsViewPager);
 
         getLoaderManager().initLoader(FIGHT_STATE_LOADER, null, new FightStateLoaderCallback());
+        getLoaderManager().initLoader(ROUND_STATS_LOADER, null, new RoundStatsLoaderCallback());
     }
 
     private void startFight() {
@@ -116,7 +129,7 @@ public class ManualFightActivity
     }
 
     /**
-     * A {@link android.app.LoaderManager.LoaderCallbacks} that handles fight state datea.
+     * A {@link android.app.LoaderManager.LoaderCallbacks} that handles fight state data.
      */
     private class FightStateLoaderCallback implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -176,6 +189,96 @@ public class ManualFightActivity
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
 
+        }
+    }
+
+    /**
+     * A {@link android.app.LoaderManager.LoaderCallbacks} that handles the round stats data.
+     */
+    private class RoundStatsLoaderCallback implements LoaderManager.LoaderCallbacks<Cursor> {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new CursorLoader(
+                    getApplicationContext(),
+                    BagZombieContract.RoundStatsTable.CONTENT_URI,
+                    BagZombieContract.RoundStatsTable.COLUMN_NAMES,
+                    null,
+                    null,
+                    null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            if ((roundStatsViewPager.getAdapter() == null)
+                    || !(roundStatsViewPager.getAdapter() instanceof RoundStatsPagerAdapter)) {
+                roundStatsViewPager.setAdapter(new RoundStatsPagerAdapter(
+                        getFragmentManager(),
+                        cursor));
+            } else {
+                RoundStatsPagerAdapter adapter =
+                        (RoundStatsPagerAdapter) roundStatsViewPager.getAdapter();
+                adapter.swapCursor(cursor, roundStatsViewPager);
+            }
+
+            cursor.setNotificationUri(
+                    getContentResolver(),
+                    BagZombieContract.RoundStatsTable.CONTENT_URI);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+
+        }
+    }
+
+    /**
+     * A {@link android.support.v4.view.PagerAdapter} that shows a round in each fragment. The
+     * first fragment shows a summary.
+     */
+    private class RoundStatsPagerAdapter extends FragmentPagerAdapter {
+
+        private final List<RoundStatsRecord> roundStatsRecords = new ArrayList<>();
+
+        private Cursor cursor;
+
+        public RoundStatsPagerAdapter(FragmentManager fm, Cursor cursor) {
+            super(fm);
+
+            init(cursor);
+        }
+
+        private void init(Cursor cursor) {
+            this.cursor = cursor;
+
+            roundStatsRecords.clear();
+            while (cursor.moveToNext()) {
+                roundStatsRecords.add(new RoundStatsRecord(cursor));
+            }
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return RoundStatsFragment.newInstance(roundStatsRecords.get(position));
+        }
+
+        @Override
+        public int getCount() {
+            return roundStatsRecords.size();
+        }
+
+        public void swapCursor(Cursor cursor, ViewPager viewPager) {
+            init(cursor);
+            notifyDataSetChanged();
+
+            // Find all fragments and update them.
+            for (int i = 0; i < getCount(); i++) {
+                String tag = "android:switcher:" + viewPager.getId() + ":" + i;
+                RoundStatsFragment fragment =
+                        (RoundStatsFragment) getFragmentManager().findFragmentByTag(tag);
+                if (fragment != null) {
+                    fragment.updateUi(roundStatsRecords.get(i));
+                }
+            }
         }
     }
 }

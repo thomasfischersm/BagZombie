@@ -40,6 +40,20 @@
     <string name="round_counter">Round %1$d</string>
     <string name="round_timer">%1$d:%2$02d</string>
 
+    <!-- Round stats fragment -->
+    <string name="rounds_title">Round %1$d</string>
+    <string name="summary_round_title">Summary</string>
+    <string name="hit_label">Hits: </string>
+    <string name="heavy_hit_label">Heavy hits: </string>
+    <string name="miss_label">Misses: </string>
+    <string name="timeout_label">Too slow: </string>
+    <string name="fastest_reaction_time_label">Fastest reaction time: </string>
+    <string name="average_reaction_time_label">Average reaction time: </string>
+    <string name="ms_value">%1$d ms</string>
+
     <!-- Activity that tells the user that the microphone permission is necessary -->
     <string name="microphone_permission_rational">This app calls out random boxing combinations and registers when your glove hits the heavy bag. To register the hit, the app uses the microphone to listen for the bang sound. If you don\'t grant microphone permissions, this app cannot function.\n\nPlease tap back, start over, and grant the microphone permission.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

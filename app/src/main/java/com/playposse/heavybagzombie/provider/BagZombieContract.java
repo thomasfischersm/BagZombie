@@ -31,6 +31,30 @@ public final class BagZombieContract {
                 CURRENT_ROUND_COLUMN};
     }
 
+    public static final class RoundStatsTable implements BaseColumns {
+
+        public static final String PATH = "roundStats";
+        public static final Uri CONTENT_URI = createContentUri(PATH);
+
+        public static final String ROUND_INDEX_COLUMN = "roundIndex";
+        public static final String HIT_COUNT_COLUMN = "hitCount";
+        public static final String HEAVY_HIT_COUNT_COLUMN = "heavyHitCount";
+        public static final String MISS_COUNT_COLUMN = "missCount";
+        public static final String TIMEOUT_COUNT_COLUMN = "timeoutCount";
+        public static final String FASTEST_REACTION_TIME_COLUMN = "fastestReactionTime";
+        public static final String AVERAGE_REACTION_TIME_COLUMN = "averageReactionTime";
+
+        public static final String[] COLUMN_NAMES = new String[]{
+                _ID,
+                ROUND_INDEX_COLUMN,
+                HIT_COUNT_COLUMN,
+                HEAVY_HIT_COUNT_COLUMN,
+                MISS_COUNT_COLUMN,
+                TIMEOUT_COUNT_COLUMN,
+                FASTEST_REACTION_TIME_COLUMN,
+                AVERAGE_REACTION_TIME_COLUMN};
+    }
+
     public static final class HitRecordTable implements  BaseColumns {
 
         public static final String PATH = "hitRecord";
@@ -64,6 +88,7 @@ public final class BagZombieContract {
         public static final String REACTION_TIME_1 = "reactionTime1";
         public static final String REACTION_TIME_2 = "reactionTime2";
         public static final String REACTION_TIME_3 = "reactionTime3";
+        public static final String IS_HEAVY_HIT_COLUMN = "isHeavyHit";
     }
 
     public static final class SaveMissAction {
@@ -98,6 +123,14 @@ public final class BagZombieContract {
         public static final int ACTIVE_FIGHT_STATE = 1;
         public static final int REST_FIGHT_STATE = 2;
         public static final int NO_FIGHT_STATE = 3;
+    }
+
+    public static final class StartRoundAction {
+
+        public static final String PATH = "startRound";
+        public static final Uri CONTENT_URI = createContentUri(PATH);
+
+        public static final String ROUND_INDEX_COLUMN = "roundIndex";
     }
 
     private static Uri createContentUri(String path) {

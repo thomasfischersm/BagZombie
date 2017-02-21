@@ -6,6 +6,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -14,10 +15,12 @@ import java.util.List;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.HitRecordTable;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.ResetFightStatsAction;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.RoundStatsTable;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveHitAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveMissAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveTimeoutAction;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.StartRoundAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction.NO_FIGHT_STATE;
 
 /**
@@ -31,7 +34,9 @@ public class BagZombieContentProvider extends ContentProvider {
     private static final int SAVE_MISS_CODE = 4;
     private static final int SAVE_TIMEOUT_CODE = 5;
     private static final int RESET_FIGHT_STATS_CODE = 6;
-    private static final int UPDATE_FIGHT_STATE_CODE = 6;
+    private static final int UPDATE_FIGHT_STATE_CODE = 7;
+    private static final int ROUND_STATS_TABLE_CODE = 8;
+    private static final int START_ROUND_ACTION_CODE = 9;
 
     private final UriMatcher uriMatcher;
 
@@ -42,6 +47,7 @@ public class BagZombieContentProvider extends ContentProvider {
     private int fightTimer = 0;
     private int currentRound = 0;
     private List<HitRecord> hitRecords = new ArrayList<>();
+    private List<RoundStatsRecord> roundStatsRecords = initRoundStatsRecord();
 
     public BagZombieContentProvider() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -52,6 +58,8 @@ public class BagZombieContentProvider extends ContentProvider {
         uriMatcher.addURI(BagZombieContract.AUTHORITY, SaveTimeoutAction.PATH, SAVE_TIMEOUT_CODE);
         uriMatcher.addURI(BagZombieContract.AUTHORITY, ResetFightStatsAction.PATH, RESET_FIGHT_STATS_CODE);
         uriMatcher.addURI(BagZombieContract.AUTHORITY, UpdateFightStateAction.PATH, UPDATE_FIGHT_STATE_CODE);
+        uriMatcher.addURI(BagZombieContract.AUTHORITY, RoundStatsTable.PATH, ROUND_STATS_TABLE_CODE);
+        uriMatcher.addURI(BagZombieContract.AUTHORITY, StartRoundAction.PATH, START_ROUND_ACTION_CODE);
     }
 
     @Override
@@ -62,7 +70,7 @@ public class BagZombieContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(
-            Uri uri,
+            @NonNull Uri uri,
             String[] projection,
             String selection,
             String[] selectionArgs,
@@ -72,7 +80,7 @@ public class BagZombieContentProvider extends ContentProvider {
 
         switch (uriMatcher.match(uri)) {
             case FIGHT_TABLE_CODE:
-                cursor = new MatrixCursor(BagZombieContract.FightTable.COLUMN_NAMES, 1);
+                cursor = new MatrixCursor(FightTable.COLUMN_NAMES, 1);
                 cursor.addRow(new Object[]{
                         hitCount,
                         missCount,
@@ -82,7 +90,7 @@ public class BagZombieContentProvider extends ContentProvider {
                         currentRound});
                 break;
             case HIT_RECORD_TABLE_CODE:
-                cursor = new MatrixCursor(BagZombieContract.HitRecordTable.COLUMN_NAMES, 1);
+                cursor = new MatrixCursor(HitRecordTable.COLUMN_NAMES, hitRecords.size());
                 for (HitRecord hitRecord : hitRecords) {
                     cursor.addRow(new Object[]{
                             hitRecords.indexOf(hitRecord),
@@ -94,7 +102,12 @@ public class BagZombieContentProvider extends ContentProvider {
                             hitRecord.getReactionTimes()[3]});
                 }
                 break;
-
+            case ROUND_STATS_TABLE_CODE:
+                cursor = new MatrixCursor(RoundStatsTable.COLUMN_NAMES, roundStatsRecords.size());
+                for (RoundStatsRecord roundStatsRecord : roundStatsRecords) {
+                    cursor.addRow(roundStatsRecord.toArray());
+                }
+                break;
         }
 
         return cursor;
@@ -102,13 +115,20 @@ public class BagZombieContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         return null;
     }
 
     @Nullable
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
+        if (getContext() == null) {
+            throw new IllegalStateException("Context is null!");
+        }
+
+        RoundStatsRecord summaryRound = roundStatsRecords.get(0);
+        RoundStatsRecord currentRound = roundStatsRecords.get(roundStatsRecords.size() - 1);
+
         switch (uriMatcher.match(uri)) {
             case SAVE_HIT_CODE:
                 hitCount++;
@@ -120,6 +140,10 @@ public class BagZombieContentProvider extends ContentProvider {
                 Integer reactionTime1 = values.getAsInteger(SaveHitAction.REACTION_TIME_1);
                 Integer reactionTime2 = values.getAsInteger(SaveHitAction.REACTION_TIME_2);
                 Integer reactionTime3 = values.getAsInteger(SaveHitAction.REACTION_TIME_3);
+                Boolean isHeavyHit = values.getAsBoolean(SaveHitAction.IS_HEAVY_HIT_COLUMN);
+
+                summaryRound.addHit(isHeavyHit, overallReactionTime);
+                currentRound.addHit(isHeavyHit, overallReactionTime);
 
                 hitRecords.add(new HitRecord(
                         hitCommand,
@@ -130,18 +154,26 @@ public class BagZombieContentProvider extends ContentProvider {
                         reactionTime3));
 
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(RoundStatsTable.CONTENT_URI, null);
                 getContext().getContentResolver().notifyChange(HitRecordTable.CONTENT_URI, null);
                 break;
             case SAVE_MISS_CODE:
                 missCount++;
+                summaryRound.addMiss();
+                currentRound.addMiss();
+
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(RoundStatsTable.CONTENT_URI, null);
                 break;
             case SAVE_TIMEOUT_CODE:
                 String missCommand = values.getAsString(SaveTimeoutAction.COMMAND_COLUMN);
                 timeoutCount++;
                 hitRecords.add(new HitRecord(missCommand, -1, null, null, null, null));
+                summaryRound.addTimeout();
+                currentRound.addTimeout();
 
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(RoundStatsTable.CONTENT_URI, null);
                 break;
             case RESET_FIGHT_STATS_CODE:
                 hitCount = 0;
@@ -149,11 +181,23 @@ public class BagZombieContentProvider extends ContentProvider {
                 timeoutCount = 0;
                 fightState = NO_FIGHT_STATE;
                 fightTimer = 0;
-                currentRound = 0;
+                this.currentRound = 0;
                 hitRecords.clear();
+                roundStatsRecords = initRoundStatsRecord();
 
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(RoundStatsTable.CONTENT_URI, null);
                 getContext().getContentResolver().notifyChange(HitRecordTable.CONTENT_URI, null);
+                break;
+            case START_ROUND_ACTION_CODE:
+                Integer roundIndex = values.getAsInteger(StartRoundAction.ROUND_INDEX_COLUMN);
+                if (roundIndex != (roundStatsRecords.size() - 1)) {
+                    throw new IllegalArgumentException("Got START_ROUND_ACTION_CODE for round "
+                            + roundIndex + ", but the round records are already of size "
+                            + roundStatsRecords.size());
+                }
+                roundStatsRecords.add(new RoundStatsRecord(roundIndex));
+                getContext().getContentResolver().notifyChange(RoundStatsTable.CONTENT_URI, null);
                 break;
         }
 
@@ -161,12 +205,21 @@ public class BagZombieContentProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         return 0;
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(
+            @NonNull Uri uri,
+            ContentValues values,
+            String selection,
+            String[] selectionArgs) {
+
+        if (getContext() == null) {
+            throw new IllegalStateException("Context is null!");
+        }
+
         switch (uriMatcher.match(uri)) {
             case UPDATE_FIGHT_STATE_CODE:
                 fightState = values.getAsInteger(UpdateFightStateAction.FIGHT_STATE_COLUMN);
@@ -178,5 +231,11 @@ public class BagZombieContentProvider extends ContentProvider {
         }
 
         return 0;
+    }
+
+    private List<RoundStatsRecord> initRoundStatsRecord() {
+        ArrayList<RoundStatsRecord> roundStatsRecords = new ArrayList<>();
+        roundStatsRecords.add(new RoundStatsRecord(-1)); // Add summary record.
+        return roundStatsRecords;
     }
 }

@@ -73,7 +73,7 @@ public class ManualFightSimulationV2 implements FightSimulationV2 {
     public PunchCombination getNextPunchCombination() {
         // Taking a random number of a random number creates a non-uniform distribution. Generally,
         // a fight should have a lot of quick hits with some random outliers that wait longer.
-        int number = RANDOM.nextInt((int) maxDelay);
+        int number = RANDOM.nextInt((int) maxDelay) + 1;
         long delay = RANDOM.nextInt(number);
 
         int randomIndex = RANDOM.nextInt(punchCombinations.size());
@@ -87,8 +87,9 @@ public class ManualFightSimulationV2 implements FightSimulationV2 {
     @Override
     public void scoreHit(PunchCombination punchCombination) {
         Log.i(LOG_CAT, "Scored hit for " + punchCombination.getCommandString());
-        fightContext.getFightStatsSaver().saveHit(punchCombination);
-        if (punchCombination.getOverallReactionTime() <= heavyTimeout) {
+        boolean isHeavyHit = punchCombination.getOverallReactionTime() <= heavyTimeout;
+        fightContext.getFightStatsSaver().saveHit(punchCombination, isHeavyHit);
+        if (isHeavyHit) {
             fightContext.getVocalQueue().scheduleVocal(VocalPlayer.Message.heavy);
         } else {
             fightContext.getVocalQueue().scheduleVocal(VocalPlayer.Message.hit);

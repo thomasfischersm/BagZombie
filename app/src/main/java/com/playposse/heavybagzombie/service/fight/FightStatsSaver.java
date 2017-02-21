@@ -3,12 +3,14 @@ package com.playposse.heavybagzombie.service.fight;
 import android.content.ContentValues;
 import android.content.Context;
 
+import com.playposse.heavybagzombie.provider.BagZombieContract;
 import com.playposse.heavybagzombie.service.fight.impl.PunchCombination;
 
 import static com.playposse.heavybagzombie.provider.BagZombieContract.ResetFightStatsAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveHitAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveMissAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveTimeoutAction;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.StartRoundAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction;
 
 /**
@@ -22,8 +24,9 @@ public class FightStatsSaver {
         this.context = context;
     }
 
-    public void saveHit(PunchCombination punchCombination) {
+    public void saveHit(PunchCombination punchCombination, boolean isHeavyHit) {
         ContentValues values = punchCombination.toContentValues();
+        values.put(SaveHitAction.IS_HEAVY_HIT_COLUMN, isHeavyHit);
         context.getContentResolver().insert(SaveHitAction.CONTENT_URI, values);
     }
 
@@ -49,5 +52,11 @@ public class FightStatsSaver {
         values.put(UpdateFightStateAction.TIMER_COLUMN, fightTimer);
         values.put(UpdateFightStateAction.CURRENT_ROUND_COLUMN, currentRound);
         context.getContentResolver().update(UpdateFightStateAction.CONTENT_URI, values, null, null);
+    }
+
+    public void startRound(int roundIndex) {
+        ContentValues values = new ContentValues();
+        values.put(StartRoundAction.ROUND_INDEX_COLUMN, roundIndex);
+        context.getContentResolver().insert(StartRoundAction.CONTENT_URI, values);
     }
 }

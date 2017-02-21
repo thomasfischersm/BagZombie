@@ -32,7 +32,7 @@ public class RandomFightSimulation extends AbstractFightSimulation {
     @Override
     protected void onScoreHit(PunchCombination punchCombination) {
         Log.i(LOG_CAT, "Scored hit for " + punchCombination);
-        getFightStatsSaver().saveHit(punchCombination);
+//        getFightStatsSaver().saveHit(punchCombination); // TODO: outdated code
         if (punchCombination.getOverallReactionTime() < 500) {
             playSound(VocalPlayer.Message.heavy);
         } else {

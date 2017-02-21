@@ -98,6 +98,7 @@ public class FightTimerV2 {
         callback.onRoundStart(currentRoundIndex);
 
         updateContentProvider();
+        fightStatsSaver.startRound(currentRoundIndex);
     }
 
     private void startRest() {
