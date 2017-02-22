@@ -159,11 +159,13 @@ public class BagZombieContentProvider extends ContentProvider {
                 break;
             case SAVE_MISS_CODE:
                 missCount++;
+                hitRecords.add(new HitRecord(null, -1, null, null, null, null));
                 summaryRound.addMiss();
                 currentRound.addMiss();
 
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
                 getContext().getContentResolver().notifyChange(RoundStatsTable.CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(HitRecordTable.CONTENT_URI, null);
                 break;
             case SAVE_TIMEOUT_CODE:
                 String missCommand = values.getAsString(SaveTimeoutAction.COMMAND_COLUMN);
@@ -174,6 +176,7 @@ public class BagZombieContentProvider extends ContentProvider {
 
                 getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
                 getContext().getContentResolver().notifyChange(RoundStatsTable.CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(HitRecordTable.CONTENT_URI, null);
                 break;
             case RESET_FIGHT_STATS_CODE:
                 hitCount = 0;

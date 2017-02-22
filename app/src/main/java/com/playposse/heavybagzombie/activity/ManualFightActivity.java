@@ -266,6 +266,14 @@ public class ManualFightActivity
             cursor.setNotificationUri(
                     getContentResolver(),
                     BagZombieContract.HitRecordTable.CONTENT_URI);
+
+            // Automatically scroll to the bottom of the ListView.
+            hitLogListView.post(new Runnable() {
+                @Override
+                public void run() {
+                    hitLogListView.setSelection(hitLogListView.getAdapter().getCount() - 1);
+                }
+            });
         }
 
         @Override
@@ -354,18 +362,22 @@ public class ManualFightActivity
                     (TextView) rootView.findViewById(R.id.reactionTimeTextView);
 
             String commandStr =
-                    cursor.getString(cursor.getColumnIndex(BagZombieContract.HitRecordTable.COMMAND_COLUMN));
+                    cursor.getString(
+                            cursor.getColumnIndex(BagZombieContract.HitRecordTable.COMMAND_COLUMN));
             commandTextView.setText(commandStr);
 
             int reactionTime =
                     cursor.getInt(
                             cursor.getColumnIndex(
                                     BagZombieContract.HitRecordTable.OVERALL_REACTION_TIME_COLUMN));
-            if (reactionTime >= 0) {
+
+            if (commandStr == null) {
+                reactionTimeTextView.setText(R.string.miss_reaction_time_constant);
+            } else if (reactionTime < 0) {
+                reactionTimeTextView.setText(R.string.timeout_reaction_time_constant);
+            } else {
                 reactionTimeTextView.setText(
                         getString(R.string.reaction_time, reactionTime));
-            } else {
-                reactionTimeTextView.setText(R.string.timeout_reaction_time_constant);
             }
         }
     }

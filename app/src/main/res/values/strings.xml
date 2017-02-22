@@ -17,6 +17,7 @@
     <string name="timeout_count_label">Timeout</string>
     <string name="reaction_time">%1$d ms</string>
     <string name="timeout_reaction_time_constant">Timeout</string>
+    <string name="miss_reaction_time_constant">Miss</string>
 
     <!-- Manual fight setup activity -->
     <string name="round_count_label"># of rounds</string>
