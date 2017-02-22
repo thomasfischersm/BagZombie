@@ -110,7 +110,10 @@ public class RoundStatsRecord {
     }
 
     public Bundle toBundle() {
-        Bundle args = new Bundle();
+        return toBundle(new Bundle());
+    }
+
+    public Bundle toBundle(Bundle args) {
         args.putInt(RoundStatsTable.ROUND_INDEX_COLUMN, roundIndex);
         args.putInt(RoundStatsTable.HIT_COUNT_COLUMN, hitCount);
         args.putInt(RoundStatsTable.HEAVY_HIT_COUNT_COLUMN, heavyHitCount);

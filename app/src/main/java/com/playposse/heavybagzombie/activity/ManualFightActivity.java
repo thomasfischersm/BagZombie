@@ -15,6 +15,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CursorAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.playposse.heavybagzombie.BagZombiePreferences;
@@ -49,11 +54,13 @@ public class ManualFightActivity
 
     private static final int FIGHT_STATE_LOADER = 1;
     private static final int ROUND_STATS_LOADER = 2;
+    private static final int HIT_LOG_LOADER = 3;
 
     private TextView fightStateTextView;
-    private TextView roundCountTextView;
-    private TextView timerTextView;
+    private TextView roundInfoTextView;
     private ViewPager roundStatsViewPager;
+    private ListView hitLogListView;
+
 
     private FightEngineServiceConnection serviceConnection = new FightEngineServiceConnection(this);
 
@@ -67,12 +74,13 @@ public class ManualFightActivity
         super.onCreate(savedInstanceState);
 
         fightStateTextView = (TextView) findViewById(R.id.fightStateTextView);
-        roundCountTextView = (TextView) findViewById(R.id.roundCountTextView);
-        timerTextView = (TextView) findViewById(R.id.timerTextView);
+        roundInfoTextView = (TextView) findViewById(R.id.roundInfoTextView);
         roundStatsViewPager = (ViewPager) findViewById(R.id.roundStatsViewPager);
+        hitLogListView = (ListView) findViewById(R.id.hitLogListView);
 
         getLoaderManager().initLoader(FIGHT_STATE_LOADER, null, new FightStateLoaderCallback());
         getLoaderManager().initLoader(ROUND_STATS_LOADER, null, new RoundStatsLoaderCallback());
+        getLoaderManager().initLoader(HIT_LOG_LOADER, null, new HitLogLoaderCallback());
     }
 
     private void startFight() {
@@ -170,15 +178,13 @@ public class ManualFightActivity
                         throw new IllegalArgumentException("Unexpected fight state: " + fightState);
                 }
 
-                String roundCounterString = getString(R.string.round_counter, currentRoundIndex);
-
                 int minutes = timer / 60;
                 int seconds = timer % 60;
-                String timerString = getString(R.string.round_timer, minutes, seconds);
+                String roundInfoStr =
+                        getString(R.string.round_info, currentRoundIndex, minutes, seconds);
 
                 fightStateTextView.setText(fightStateResId);
-                roundCountTextView.setText(roundCounterString);
-                timerTextView.setText(timerString);
+                roundInfoTextView.setText(roundInfoStr);
             }
 
             cursor.setNotificationUri(
@@ -227,7 +233,47 @@ public class ManualFightActivity
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
+            // Nothing to do.
+        }
+    }
 
+    /**
+     * A {@link android.app.LoaderManager.LoaderCallbacks} that loads the hit log.
+     */
+    private class HitLogLoaderCallback implements LoaderManager.LoaderCallbacks<Cursor> {
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new CursorLoader(
+                    getApplicationContext(),
+                    BagZombieContract.HitRecordTable.CONTENT_URI,
+                    BagZombieContract.HitRecordTable.COLUMN_NAMES,
+                    null,
+                    null,
+                    null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            ListAdapter adapter = hitLogListView.getAdapter();
+            if ((adapter != null) && (adapter instanceof CursorAdapter)) {
+                ((CursorAdapter) adapter).swapCursor(cursor);
+            } else {
+                hitLogListView.setAdapter(
+                        new HitLogCursorAdapter(getApplicationContext(), cursor, false));
+            }
+
+            cursor.setNotificationUri(
+                    getContentResolver(),
+                    BagZombieContract.HitRecordTable.CONTENT_URI);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            ListAdapter adapter = hitLogListView.getAdapter();
+            if ((adapter != null) && (adapter instanceof CursorAdapter)) {
+                ((CursorAdapter) adapter).swapCursor(null);
+            }
         }
     }
 
@@ -278,6 +324,48 @@ public class ManualFightActivity
                 if (fragment != null) {
                     fragment.updateUi(roundStatsRecords.get(i));
                 }
+            }
+        }
+    }
+
+    /**
+     * A {@link CursorAdapter} that shows a list of all the hits, misses, and timeouts that the user
+     * has made.
+     */
+    public class HitLogCursorAdapter extends CursorAdapter {
+
+        public HitLogCursorAdapter(Context context, Cursor c, boolean autoRequery) {
+            super(context, c, autoRequery);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            return getLayoutInflater().inflate(
+                    R.layout.hit_record_list_item,
+                    parent,
+                    false);
+        }
+
+        @Override
+        public void bindView(View rootView, Context context, Cursor cursor) {
+            TextView commandTextView =
+                    (TextView) rootView.findViewById(R.id.commandTextView);
+            TextView reactionTimeTextView =
+                    (TextView) rootView.findViewById(R.id.reactionTimeTextView);
+
+            String commandStr =
+                    cursor.getString(cursor.getColumnIndex(BagZombieContract.HitRecordTable.COMMAND_COLUMN));
+            commandTextView.setText(commandStr);
+
+            int reactionTime =
+                    cursor.getInt(
+                            cursor.getColumnIndex(
+                                    BagZombieContract.HitRecordTable.OVERALL_REACTION_TIME_COLUMN));
+            if (reactionTime >= 0) {
+                reactionTimeTextView.setText(
+                        getString(R.string.reaction_time, reactionTime));
+            } else {
+                reactionTimeTextView.setText(R.string.timeout_reaction_time_constant);
             }
         }
     }

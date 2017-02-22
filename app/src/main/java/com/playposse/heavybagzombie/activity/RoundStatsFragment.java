@@ -73,9 +73,13 @@ public class RoundStatsFragment extends Fragment {
 
     public void updateUi(RoundStatsRecord roundStatsRecord) {
         this.roundStatsRecord = roundStatsRecord;
-//        setArguments(roundStatsRecord.toBundle());
 
         updateUi();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        roundStatsRecord.toBundle(outState);
     }
 
     private void updateUi() {
