@@ -19,6 +19,7 @@ public final class IntentParameters {
     public static final String ROUND_DURATION_EXTRA = "roundDuration";
     public static final String REST_DURATION_EXTRA = "restDuration";
     public static final String PUNCH_COMBINATIONS_EXTRA = "punchCombinations";
+    public static final String REENTRY_FROM_NOTIFICATION_EXTRA = "reentryFromNotification";
 
     private IntentParameters() {
     }
@@ -36,6 +37,13 @@ public final class IntentParameters {
         intent.putExtra(ROUND_DURATION_EXTRA, roundDuration);
         intent.putExtra(REST_DURATION_EXTRA, restDuration);
         intent.putExtra(PUNCH_COMBINATIONS_EXTRA, punchCombinationsArray);
+        return intent;
+    }
+
+    public static Intent createManualFightIntentForNotification(Context context) {
+        Intent intent = new Intent(context, ManualFightActivity.class);
+        intent.putExtra(REENTRY_FROM_NOTIFICATION_EXTRA, true);
+        intent.setAction("com.playposse.heavybagzombie.showFight");
         return intent;
     }
 }

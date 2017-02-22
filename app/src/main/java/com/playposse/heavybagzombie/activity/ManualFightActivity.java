@@ -81,6 +81,13 @@ public class ManualFightActivity
     }
 
     private void startFight() {
+        boolean isReentryFromNotification =
+                getIntent().getBooleanExtra(IntentParameters.REENTRY_FROM_NOTIFICATION_EXTRA, false);
+        if (isReentryFromNotification) {
+            // The fight is already running. Skip this.
+            return;
+        }
+
         int roundCount = getIntent().getIntExtra(
                 IntentParameters.ROUND_COUNT_EXTRA,
                 BagZombiePreferences.DEFAULT_ROUND_COUNT);
