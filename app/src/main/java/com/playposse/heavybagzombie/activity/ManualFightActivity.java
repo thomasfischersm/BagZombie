@@ -7,13 +7,10 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v13.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,13 +31,11 @@ import com.playposse.heavybagzombie.service.fight.impl.PunchCombination;
 import com.playposse.heavybagzombie.service.fight.v2.FightSimulationV2;
 import com.playposse.heavybagzombie.util.IntentParameters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ManualFightActivity
         extends PermittedParentActivity
@@ -72,6 +67,8 @@ public class ManualFightActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         fightStateTextView = (TextView) findViewById(R.id.fightStateTextView);
         roundInfoTextView = (TextView) findViewById(R.id.roundInfoTextView);
