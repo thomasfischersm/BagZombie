@@ -6,12 +6,15 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 /**
  * A {@link android.app.Activity} that requests permission to access the microphone if it hasn't
  * been granted yet.
  */
 public abstract class PermittedParentActivity extends ParentActivity {
+
+    private static final String LOG_CAT = PermittedParentActivity.class.getSimpleName();
 
     private static final int PERMISSION_REQUEST_CODE = 1;
 
@@ -27,6 +30,7 @@ public abstract class PermittedParentActivity extends ParentActivity {
                 ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
 
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            Log.i(LOG_CAT, "Got microphone permissions.");
             return true;
         }
 
@@ -48,7 +52,9 @@ public abstract class PermittedParentActivity extends ParentActivity {
             && (grantResults.length > 0)
                 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
             onMicrophonePermissionHasBeenGranted();
-        } else {
+        } else if ((requestCode == PERMISSION_REQUEST_CODE)
+                && (grantResults.length > 0)
+                && (grantResults[0] == PackageManager.PERMISSION_DENIED)) {
             startActivity(new Intent(this, MicrophonePermissionNeededActivity.class));
         }
     }
