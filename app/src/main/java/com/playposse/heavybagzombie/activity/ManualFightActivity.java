@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable;
-import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction;
 
 public class ManualFightActivity
         extends PermittedParentActivity
@@ -51,13 +51,18 @@ public class ManualFightActivity
     private static final int ROUND_STATS_LOADER = 2;
     private static final int HIT_LOG_LOADER = 3;
 
+    public static final String IS_STOPPED_PARAMETER = "isStopped";
+    public static final String IS_STARTED_PARAMETER = "isStarted";
+
+    private ImageButton stopButton;
     private TextView fightStateTextView;
     private TextView roundInfoTextView;
     private ViewPager roundStatsViewPager;
     private ListView hitLogListView;
 
-
     private FightEngineServiceConnection serviceConnection = new FightEngineServiceConnection(this);
+    private boolean isStopped = false;
+    private boolean isStarted = false;
 
     @Override
     protected int getLayoutResId() {
@@ -70,6 +75,7 @@ public class ManualFightActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        stopButton = (ImageButton) findViewById(R.id.stopButton);
         fightStateTextView = (TextView) findViewById(R.id.fightStateTextView);
         roundInfoTextView = (TextView) findViewById(R.id.roundInfoTextView);
         roundStatsViewPager = (ViewPager) findViewById(R.id.roundStatsViewPager);
@@ -78,9 +84,31 @@ public class ManualFightActivity
         getLoaderManager().initLoader(FIGHT_STATE_LOADER, null, new FightStateLoaderCallback());
         getLoaderManager().initLoader(ROUND_STATS_LOADER, null, new RoundStatsLoaderCallback());
         getLoaderManager().initLoader(HIT_LOG_LOADER, null, new HitLogLoaderCallback());
+
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (serviceConnection.isConnected()) {
+                    serviceConnection.getFightEngine().stopFight();
+                    isStopped = true;
+                }
+            }
+        });
     }
 
     private void startFight() {
+        if (isStopped) {
+            // The user has already stopped the fight. Rotating the screen shouldn't start the fight
+            // again.
+            return;
+        }
+
+        if (isStarted) {
+            // The fight has already been started. Re-starting the activity due to a screen rotation
+            // shouldn't start the fight a second time.
+            return;
+        }
+
         boolean isReentryFromNotification =
                 getIntent().getBooleanExtra(IntentParameters.REENTRY_FROM_NOTIFICATION_EXTRA, false);
         if (isReentryFromNotification) {
@@ -108,7 +136,8 @@ public class ManualFightActivity
                 DEFAULT_MAX_DELAY,
                 DEFAULT_INDIVIDUAL_TIMEOUT,
                 DEFAULT_HEAVY_TIMEOUT);
-        serviceConnection.getFightEngine().startFight(fightSimulation, false);
+        serviceConnection.getFightEngine().startFight(fightSimulation, true);
+        isStarted = true;
     }
 
     @Override
@@ -140,6 +169,22 @@ public class ManualFightActivity
         }
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        isStopped = savedInstanceState.getBoolean(IS_STOPPED_PARAMETER, false);
+        isStarted = savedInstanceState.getBoolean(IS_STARTED_PARAMETER, false);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(IS_STOPPED_PARAMETER, isStopped);
+        outState.putBoolean(IS_STARTED_PARAMETER, isStarted);
+    }
+
     /**
      * A {@link android.app.LoaderManager.LoaderCallbacks} that handles fight state data.
      */
@@ -169,14 +214,17 @@ public class ManualFightActivity
 
                 final int fightStateResId;
                 switch (fightState) {
-                    case UpdateFightStateAction.NO_FIGHT_STATE:
+                    case FightTable.NO_FIGHT_STATE:
                         fightStateResId = R.string.fight_state_none;
                         break;
-                    case UpdateFightStateAction.ACTIVE_FIGHT_STATE:
+                    case FightTable.ACTIVE_FIGHT_STATE:
                         fightStateResId = R.string.fight_state_active;
                         break;
-                    case UpdateFightStateAction.REST_FIGHT_STATE:
+                    case FightTable.REST_FIGHT_STATE:
                         fightStateResId = R.string.fight_state_rest;
+                        break;
+                    case FightTable.STOPPED_FIGHT_STATE:
+                        fightStateResId = R.string.fight_state_stopped;
                         break;
                     default:
                         throw new IllegalArgumentException("Unexpected fight state: " + fightState);

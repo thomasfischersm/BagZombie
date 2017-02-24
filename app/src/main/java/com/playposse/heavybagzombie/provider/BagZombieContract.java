@@ -29,6 +29,11 @@ public final class BagZombieContract {
                 FIGHT_STATE_COLUMN,
                 TIMER_COLUMN,
                 CURRENT_ROUND_COLUMN};
+
+        public static final int ACTIVE_FIGHT_STATE = 1;
+        public static final int REST_FIGHT_STATE = 2;
+        public static final int NO_FIGHT_STATE = 3;
+        public static final int STOPPED_FIGHT_STATE = 4;
     }
 
     public static final class RoundStatsTable implements BaseColumns {
@@ -120,9 +125,6 @@ public final class BagZombieContract {
         public static final String TIMER_COLUMN = "timer";
         public static final String CURRENT_ROUND_COLUMN = "currentRound";
 
-        public static final int ACTIVE_FIGHT_STATE = 1;
-        public static final int REST_FIGHT_STATE = 2;
-        public static final int NO_FIGHT_STATE = 3;
     }
 
     public static final class StartRoundAction {
@@ -131,6 +133,12 @@ public final class BagZombieContract {
         public static final Uri CONTENT_URI = createContentUri(PATH);
 
         public static final String ROUND_INDEX_COLUMN = "roundIndex";
+    }
+
+    public static final class StopFightAction {
+
+        public static final String PATH = "stopFight";
+        public static final Uri CONTENT_URI = createContentUri(PATH);
     }
 
     private static Uri createContentUri(String path) {

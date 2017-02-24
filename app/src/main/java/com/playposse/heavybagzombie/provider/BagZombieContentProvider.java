@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable.STOPPED_FIGHT_STATE;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.HitRecordTable;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.ResetFightStatsAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.RoundStatsTable;
@@ -21,7 +22,8 @@ import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveHitAct
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveMissAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveTimeoutAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.StartRoundAction;
-import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction.NO_FIGHT_STATE;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.StopFightAction;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable.NO_FIGHT_STATE;
 
 /**
  * A {@link ContentProvider} that provides information about the current fight.
@@ -37,6 +39,7 @@ public class BagZombieContentProvider extends ContentProvider {
     private static final int UPDATE_FIGHT_STATE_CODE = 7;
     private static final int ROUND_STATS_TABLE_CODE = 8;
     private static final int START_ROUND_ACTION_CODE = 9;
+    private static final int STOP_FIGHT_ACTION_CODE = 10;
 
     private final UriMatcher uriMatcher;
 
@@ -60,6 +63,7 @@ public class BagZombieContentProvider extends ContentProvider {
         uriMatcher.addURI(BagZombieContract.AUTHORITY, UpdateFightStateAction.PATH, UPDATE_FIGHT_STATE_CODE);
         uriMatcher.addURI(BagZombieContract.AUTHORITY, RoundStatsTable.PATH, ROUND_STATS_TABLE_CODE);
         uriMatcher.addURI(BagZombieContract.AUTHORITY, StartRoundAction.PATH, START_ROUND_ACTION_CODE);
+        uriMatcher.addURI(BagZombieContract.AUTHORITY, StopFightAction.PATH, STOP_FIGHT_ACTION_CODE);
     }
 
     @Override
@@ -201,6 +205,10 @@ public class BagZombieContentProvider extends ContentProvider {
                 }
                 roundStatsRecords.add(new RoundStatsRecord(roundIndex));
                 getContext().getContentResolver().notifyChange(RoundStatsTable.CONTENT_URI, null);
+                break;
+            case STOP_FIGHT_ACTION_CODE:
+                fightState = STOPPED_FIGHT_STATE;
+                getContext().getContentResolver().notifyChange(FightTable.CONTENT_URI, null);
                 break;
         }
 

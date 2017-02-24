@@ -3,7 +3,6 @@ package com.playposse.heavybagzombie.service.fight;
 import android.content.ContentValues;
 import android.content.Context;
 
-import com.playposse.heavybagzombie.provider.BagZombieContract;
 import com.playposse.heavybagzombie.service.fight.impl.PunchCombination;
 
 import static com.playposse.heavybagzombie.provider.BagZombieContract.ResetFightStatsAction;
@@ -11,6 +10,7 @@ import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveHitAct
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveMissAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.SaveTimeoutAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.StartRoundAction;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.StopFightAction;
 import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction;
 
 /**
@@ -58,5 +58,9 @@ public class FightStatsSaver {
         ContentValues values = new ContentValues();
         values.put(StartRoundAction.ROUND_INDEX_COLUMN, roundIndex);
         context.getContentResolver().insert(StartRoundAction.CONTENT_URI, values);
+    }
+
+    public void stopFight() {
+        context.getContentResolver().insert(StopFightAction.CONTENT_URI, new ContentValues());
     }
 }

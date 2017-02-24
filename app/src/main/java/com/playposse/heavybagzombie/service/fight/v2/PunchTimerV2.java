@@ -72,7 +72,7 @@ public class PunchTimerV2 {
     public synchronized void stop() {
         isStopped = true;
         timer.cancel();
-        if (dispatcher.isStopped()) {
+        if (!dispatcher.isStopped()) {
             dispatcher.stop();
         }
     }

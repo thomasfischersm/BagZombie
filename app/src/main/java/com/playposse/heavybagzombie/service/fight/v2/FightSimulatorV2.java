@@ -39,12 +39,14 @@ public class FightSimulatorV2 implements FightTimerCallbackV2, PunchTimerCallbac
     }
 
     public void start() {
+        fightStatsSaver.resetFightStats();
         fightTimer.start();
     }
 
     public void stop() {
         fightTimer.stop();
         punchTimer.stop();
+        fightStatsSaver.stopFight();
     }
 
     public void pause() {

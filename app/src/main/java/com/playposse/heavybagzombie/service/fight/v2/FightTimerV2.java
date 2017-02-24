@@ -7,9 +7,9 @@ import com.playposse.heavybagzombie.service.fight.FightStatsSaver;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction.ACTIVE_FIGHT_STATE;
-import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction.NO_FIGHT_STATE;
-import static com.playposse.heavybagzombie.provider.BagZombieContract.UpdateFightStateAction.REST_FIGHT_STATE;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable.ACTIVE_FIGHT_STATE;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable.NO_FIGHT_STATE;
+import static com.playposse.heavybagzombie.provider.BagZombieContract.FightTable.REST_FIGHT_STATE;
 
 /**
  * Timekeeper for the fight and its rounds.
