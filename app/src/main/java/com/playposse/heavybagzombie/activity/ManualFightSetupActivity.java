@@ -82,7 +82,7 @@ public class ManualFightSetupActivity extends ParentActivity {
             }
         });
 
-        roundDurationEditText.addTextChangedListener(new PreferencesTextWatcher() {
+        restDurationEditText.addTextChangedListener(new PreferencesTextWatcher() {
             @Override
             protected void saveToPreferences(Context context, int number) {
                 BagZombiePreferences.setCustomRestDuration(context, number);
