@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "640475077674",
+    "project_id": "bag-zombie"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640475077674:android:7379c69042ff4b9d",
+        "android_client_info": {
+          "package_name": "com.playposse.heavybagzombie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvMmEIKZhYG4KjHI7oJ34tqCv8mfYzjd8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-92561975-2"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
