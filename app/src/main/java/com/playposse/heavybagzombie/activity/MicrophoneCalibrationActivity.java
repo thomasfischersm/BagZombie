@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -98,23 +99,6 @@ public class MicrophoneCalibrationActivity extends PermittedParentActivity {
 
     private void startSlapDetection() {
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(SAMPLE_RATE, BUFFER_SIZE,0);
-
-        PitchDetectionHandler pdh = new PitchDetectionHandler() {
-            @Override
-            public void handlePitch(PitchDetectionResult result, AudioEvent e) {
-                final float pitchInHz = result.getPitch();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        TextView text = (TextView) findViewById(R.id.pitchTextView);
-                        text.setText("" + pitchInHz);
-                    }
-                });
-            }
-        };
-
-        AudioProcessor p = new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, SAMPLE_RATE, BUFFER_SIZE, pdh);
-        dispatcher.addAudioProcessor(p);
         resetSlapDetector();
         new Thread(dispatcher,"Audio Dispatcher").start();
     }
@@ -147,6 +131,9 @@ public class MicrophoneCalibrationActivity extends PermittedParentActivity {
                 BagZombiePreferences.getSensitivity(this),
                 BagZombiePreferences.getThreshold(this));
         dispatcher.addAudioProcessor(percussionOnsetDetector);
+        Log.i(LOG_CAT, "Added percussion detector with sensitivity "
+                + BagZombiePreferences.getSensitivity(this)
+                + " and threshold " + BagZombiePreferences.getThreshold(this));
     }
 
     private class SlapHandler implements OnsetHandler {

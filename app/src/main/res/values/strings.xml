@@ -10,6 +10,7 @@
     <string name="sensitivity_legend">Sensitivity of peak detector applied to broadband detection function (%).</string>
     <string name="threshold_legend">Energy rise within a frequency bin necessary to count toward broadband total (dB).</string>
     <string name="microphone_calibration_tips">Tips:\n- Wear headphones to avoid sound feedback.\n-The first slider gets more sensitive to the left. The second gets more sensitive to the right.\n-Avoid any loud sounds other than punching, e.g. sneakers squeaking.\n- If you are in a noisy environment with lots of other boxes, this won\'t work.</string>
+    <string name="dot_bang_legend">Dot shown for every bang detected: </string>
 
     <!-- Random fight activity -->
     <string name="hit_count_label">Hits</string>
