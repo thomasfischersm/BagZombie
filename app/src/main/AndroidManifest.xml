@@ -58,6 +58,7 @@
         <activity
             android:name=".activity.ManualFightSetupActivity"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".activity.MainActivity" />
         <activity
             android:name=".activity.MainActivity"
