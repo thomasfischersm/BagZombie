@@ -60,4 +60,20 @@
     <!-- Service notification -->
     <string name="service_notification_title">Bag Zombie</string>
     <string name="service_notification_text">The fight is running.</string>
+
+    <!-- Menu -->
+    <string name="help_menu">Help</string>
+    <string name="settings_menu">Settings</string>
+    <string name="send_feedback_menu">Send us feedback</string>
+    <string name="about_menu">About</string>
+
+    <!-- Dialog and e-mail template for the user to send feedback -->
+    <string name="dialog_continue_button">Continue</string>
+    <string name="dialog_cancel_button">Cancel</string>
+    <string name="feedback_dialog_title">Send us feedback!</string>
+    <string name="feedback_dialog_message">An e-mail will be opened where you can send me feedback.</string>
+    <string name="feedback_email_recipient">thomas@playposse.com</string>
+    <string name="feedback_email_subject">Feedback About Bag Zombie Android App</string>
+    <string name="feedback_email_body">Please, send me your feedback. I care about hearing from you.</string>
+
 </resources>
