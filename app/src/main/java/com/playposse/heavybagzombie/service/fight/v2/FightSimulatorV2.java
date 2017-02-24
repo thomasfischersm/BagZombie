@@ -71,6 +71,10 @@ public class FightSimulatorV2 implements FightTimerCallbackV2, PunchTimerCallbac
 
     @Override
     public void onLastRoundEnd() {
+        fightTimer.stop();
+        punchTimer.stop();
+        fightStatsSaver.stopFight();
+        fightSimulation.onRoundEnd(fightSimulation.getMaxRound() - 1, true);
     }
 
     @Override

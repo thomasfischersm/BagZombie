@@ -112,12 +112,10 @@ public class ManualFightSimulationV2 implements FightSimulationV2 {
     @Override
     public void onRoundStart(int roundIndex) {
         fightContext.getVocalQueue().scheduleVocal(VocalPlayer.Message.readyFight);
-        // TODO: start round in content provider.
     }
 
     @Override
     public void onRoundEnd(int roundIndex, boolean isFinalRound) {
         fightContext.getVocalQueue().scheduleVocal(VocalPlayer.Message.stop);
-        // TODO: end round in content provider.
     }
 }
