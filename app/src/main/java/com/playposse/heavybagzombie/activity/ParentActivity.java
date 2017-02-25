@@ -46,7 +46,7 @@ public abstract class ParentActivity extends AppCompatActivity {
                 startActivity(new Intent(this, HelpActivity.class));
                 return true;
             case R.id.settings_menu_item:
-                // TODO
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.send_feedback_menu_item:
                 EmailUtil.sendFeedbackAction(this);

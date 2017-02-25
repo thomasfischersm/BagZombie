@@ -86,6 +86,9 @@
         <activity
             android:name=".activity.AboutActivity"
             android:parentActivityName=".activity.MainActivity" />
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:parentActivityName=".activity.MainActivity" />
     </application>
 
 </manifest>
