@@ -2,6 +2,7 @@ package com.playposse.heavybagzombie.service.fight.v2;
 
 import android.content.Context;
 
+import com.playposse.heavybagzombie.service.ForegroundService;
 import com.playposse.heavybagzombie.service.fight.FightStatsSaver;
 import com.playposse.heavybagzombie.service.fight.impl.PunchCombination;
 
@@ -11,14 +12,20 @@ import com.playposse.heavybagzombie.service.fight.impl.PunchCombination;
 public class FightSimulatorV2 implements FightTimerCallbackV2, PunchTimerCallbackV2 {
 
     private final FightSimulationV2 fightSimulation;
+    private final ForegroundService foregroundService;
 
     private final FightTimerV2 fightTimer;
     private final PunchTimerV2 punchTimer;
     private final VocalQueueV2 vocalQueue;
     private final FightStatsSaver fightStatsSaver;
 
-    public FightSimulatorV2(Context context, FightSimulationV2 fightSimulation) {
+    public FightSimulatorV2(
+            Context context,
+            FightSimulationV2 fightSimulation,
+            ForegroundService foregroundService) {
+
         this.fightSimulation = fightSimulation;
+        this.foregroundService = foregroundService;
 
         fightStatsSaver = new FightStatsSaver(context);
 
@@ -75,6 +82,7 @@ public class FightSimulatorV2 implements FightTimerCallbackV2, PunchTimerCallbac
         punchTimer.stop();
         fightStatsSaver.stopFight();
         fightSimulation.onRoundEnd(fightSimulation.getMaxRound() - 1, true);
+        foregroundService.stopForeground(true);
     }
 
     @Override

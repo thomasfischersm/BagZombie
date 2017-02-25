@@ -21,7 +21,9 @@ import com.playposse.heavybagzombie.util.IntentParameters;
  * A {@link android.app.Service} that records audio to detect when the heavy bag is hit and
  * simulates the fight. It can be connected to from the app and the app status.
  */
-public class FightEngineService extends Service implements FightEngine, FightEngineCallback {
+public class FightEngineService
+        extends Service
+        implements FightEngine, FightEngineCallback, ForegroundService {
 
     private static final String LOG_CAT = FightEngineService.class.getSimpleName();
 
@@ -45,7 +47,7 @@ public class FightEngineService extends Service implements FightEngine, FightEng
         stopFight();
         this.fightSimulation = fightSimulation;
 
-        fightSimulator = new FightSimulatorV2(this, fightSimulation);
+        fightSimulator = new FightSimulatorV2(this, fightSimulation, this);
         fightSimulator.start();
 
         startForeground();
