@@ -1,6 +1,5 @@
 package com.playposse.heavybagzombie.service;
 
-import com.playposse.heavybagzombie.service.fight.FightSimulation;
 import com.playposse.heavybagzombie.service.fight.v2.FightSimulationV2;
 
 /**

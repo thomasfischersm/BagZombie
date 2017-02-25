@@ -10,9 +10,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.playposse.heavybagzombie.R;
-import com.playposse.heavybagzombie.activity.ManualFightActivity;
-import com.playposse.heavybagzombie.service.fight.FightEngineCallback;
-import com.playposse.heavybagzombie.service.fight.FightSimulation;
 import com.playposse.heavybagzombie.service.fight.v2.FightSimulationV2;
 import com.playposse.heavybagzombie.service.fight.v2.FightSimulatorV2;
 import com.playposse.heavybagzombie.util.IntentParameters;
@@ -23,7 +20,7 @@ import com.playposse.heavybagzombie.util.IntentParameters;
  */
 public class FightEngineService
         extends Service
-        implements FightEngine, FightEngineCallback, ForegroundService {
+        implements FightEngine, ForegroundService {
 
     private static final String LOG_CAT = FightEngineService.class.getSimpleName();
 
