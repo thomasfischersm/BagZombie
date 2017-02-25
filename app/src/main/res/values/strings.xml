@@ -92,4 +92,6 @@
     <string name="feedback_email_subject">Feedback About Bag Zombie Android App</string>
     <string name="feedback_email_body">Please, send me your feedback. I care about hearing from you.</string>
 
+    <!-- Input validation messages -->
+    <string name="required_validation_message">Required</string>
 </resources>

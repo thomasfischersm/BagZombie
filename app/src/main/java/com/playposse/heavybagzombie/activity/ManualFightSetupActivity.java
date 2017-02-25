@@ -20,6 +20,7 @@ import com.playposse.heavybagzombie.BagZombiePreferences;
 import com.playposse.heavybagzombie.R;
 import com.playposse.heavybagzombie.util.InputFilterMinMax;
 import com.playposse.heavybagzombie.util.IntentParameters;
+import com.playposse.heavybagzombie.util.ValidationUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +36,10 @@ public class ManualFightSetupActivity extends ParentActivity {
     private static final int POPULAR_COMBOS_POSITION = 2;
     private static final int ALL_COMBOS_POSITION = 3;
     private static final int CUSTOM_COMBO_POSITION = 4;
+
+    private static final int MIN_NUMBER_ENTRY = 1;
+    private static final int MAX_ROUND_COUNT = 12;
+    private static final int MAX_DURATION = 600;
 
     private EditText roundCountEditText;
     private EditText roundDurationEditText;
@@ -123,15 +128,16 @@ public class ManualFightSetupActivity extends ParentActivity {
         startFightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(IntentParameters.createManualFightIntent(
-                        getApplicationContext(),
-                        combinationSpinner.getSelectedItemPosition()));
+                startFightActivity();
             }
         });
 
-        roundCountEditText.setFilters(new InputFilter[]{new InputFilterMinMax(1, 12)});
-        roundDurationEditText.setFilters(new InputFilter[]{new InputFilterMinMax(1, 600)});
-        restDurationEditText.setFilters(new InputFilter[]{new InputFilterMinMax(1, 600)});
+        roundCountEditText.setFilters(new InputFilter[]{
+                new InputFilterMinMax(MIN_NUMBER_ENTRY, MAX_ROUND_COUNT)});
+        roundDurationEditText.setFilters(new InputFilter[]{
+                new InputFilterMinMax(MIN_NUMBER_ENTRY, MAX_DURATION)});
+        restDurationEditText.setFilters(new InputFilter[]{
+                new InputFilterMinMax(MIN_NUMBER_ENTRY, MAX_DURATION)});
     }
 
     @Override
@@ -280,7 +286,7 @@ public class ManualFightSetupActivity extends ParentActivity {
         return getValidComboString(editText.getText().toString());
     }
 
-    static String getValidComboString(String str) {
+    private static String getValidComboString(String str) {
         str = str.replaceAll("[,;]", " "); // Convert separators to spaces.
         str = str.replaceAll("[^123456 ]", " "); // Remove any non-numbers because they are noise.
         str = str.replaceAll(" +", " "); // Collapse all separators to a single space.
@@ -291,6 +297,20 @@ public class ManualFightSetupActivity extends ParentActivity {
             str = str.substring(0, maxLength);
         }
         return str.trim();
+    }
+
+    private void startFightActivity() {
+        if (validateUserInput()) {
+            startActivity(IntentParameters.createManualFightIntent(
+                    getApplicationContext(),
+                    combinationSpinner.getSelectedItemPosition()));
+        }
+    }
+
+    private boolean validateUserInput() {
+        return ValidationUtil.validateRequired(roundCountEditText)
+                && ValidationUtil.validateRequired(roundDurationEditText)
+                && ValidationUtil.validateRequired(restDurationEditText);
     }
 
     /**
