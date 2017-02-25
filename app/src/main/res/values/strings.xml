@@ -71,7 +71,7 @@
     <string name="about_tarsosdsp_heading">TarsosDSP</string>
     <string name="about_tarsosdsp_body_text">The sound detection is done by a software library called TarsosDSP. If anyone knows how to detect the bang of the punch better, please contact me. Also if someone knows how to make tuning the microphone automatic, please let me know.\n\nYou can find the library here:\n<a href="https://github.com/JorenSix/TarsosDSP">https://github.com/JorenSix/TarsosDSP</a></string>
     <string name="about_credits_heading">Credits and copyright</string>
-    <string name="about_credits_body_text">(C) 2017 Thomas Fischer</string>
+    <string name="about_credits_body_text">(C) 2017 Thomas Fischer\nMale voice by Wade Dauksch</string>
 
     <!-- Service notification -->
     <string name="service_notification_title">Bag Zombie</string>
