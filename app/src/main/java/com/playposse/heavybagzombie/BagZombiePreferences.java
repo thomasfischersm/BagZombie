@@ -25,6 +25,7 @@ public final class BagZombiePreferences {
     private static final String CUSTOM_REST_DURATION_KEY = "customRestDuration";
     private static final String CUSTOM_COMBO_CHOICE_KEY = "customComboChoice";
     private static final String CUSTOM_COMBO_SET_KEY = "customComboSet";
+    private static final String VOICE_INDEX_KEY = "voiceIndex";
 
     public static final int DEFAULT_ROUND_COUNT = 3;
     public static final int DEFAULT_ROUND_DURATION = 60;
@@ -95,6 +96,18 @@ public final class BagZombiePreferences {
 
     public static void setCustomComboSet(Context context, Set<String> customCombos) {
         setStringSet(context, CUSTOM_COMBO_SET_KEY, customCombos);
+    }
+
+    public static int getVoiceIndex(Context context) {
+        try {
+            SharedPreferences sharedPreferences =
+                    context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            String str = sharedPreferences.getString(VOICE_INDEX_KEY, "1");
+            return Integer.parseInt(str);
+        } catch (NumberFormatException ex) {
+            // Return the default.
+            return 1;
+        }
     }
 
     private static String getString(Context context, String key) {

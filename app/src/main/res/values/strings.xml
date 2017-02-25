@@ -77,10 +77,12 @@
     <string-array name="voices_label_array">
         <item>Male voice</item>
         <item>Female voice</item>
+        <item>Developer\'s voice</item>
     </string-array>
     <string-array name="voices_value_array">
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
 
 
