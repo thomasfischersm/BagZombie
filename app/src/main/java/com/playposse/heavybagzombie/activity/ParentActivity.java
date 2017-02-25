@@ -1,5 +1,6 @@
 package com.playposse.heavybagzombie.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -42,7 +43,7 @@ public abstract class ParentActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.help_menu_item:
-                // TODO
+                startActivity(new Intent(this, HelpActivity.class));
                 return true;
             case R.id.settings_menu_item:
                 // TODO

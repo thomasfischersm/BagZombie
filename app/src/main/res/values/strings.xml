@@ -57,6 +57,12 @@
     <!-- Activity that tells the user that the microphone permission is necessary -->
     <string name="microphone_permission_rational">This app calls out random boxing combinations and registers when your glove hits the heavy bag. To register the hit, the app uses the microphone to listen for the bang sound. If you don\'t grant microphone permissions, this app cannot function.\n\nPlease tap back, start over, and grant the microphone permission.</string>
 
+    <!-- Help activity -->
+    <string name="help_troubleshooting_heading">Troubleshooting</string>
+    <string name="help_troubleshooting_body_text">The audio detection of bag punches can be finicky. There simply isn\'t a way of differentiating between your punch and a loud punch by someone else next to you. Or a loud sneaker screech may be detected as a punch. If you want quality detection, there are $200 dollar sensors that go into the glove. However, there are things that you can do to improve the sound detection of punches:\n\n1. Be in a quiet room by yourself.\n2. Use head phones. The sound that the app creates will create a sound feedback loop to the app.\n3. Use the sound calibration setting to tune the microphone on your phone.</string>
+    <string name="help_punches_heading">Punches</string>
+    <string name="help_punches_body_text">Wonder what those numbers that the app yells mean? They are standardized references to specific punches.\n\n1 = jab\n2 = right hand\n3 = left hook\n4 = right hook (or overhand right)\n5 = left uppercut\n6 = right uppercut\n\nFor more information, see: <a href="http://www.expertboxing.com/boxing-strategy/punch-combinations/johnnys-punching-combinations-list">http://www.expertboxing.com/boxing-strategy/punch-combinations/johnnys-punching-combinations-list</a></string>
+
     <!-- Service notification -->
     <string name="service_notification_title">Bag Zombie</string>
     <string name="service_notification_text">The fight is running.</string>
