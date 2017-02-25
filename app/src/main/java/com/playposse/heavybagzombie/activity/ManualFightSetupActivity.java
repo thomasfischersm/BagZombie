@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.playposse.heavybagzombie.BagZombiePreferences;
 import com.playposse.heavybagzombie.R;
+import com.playposse.heavybagzombie.util.InputFilterMinMax;
 import com.playposse.heavybagzombie.util.IntentParameters;
 
 import java.util.ArrayList;
@@ -126,6 +128,10 @@ public class ManualFightSetupActivity extends ParentActivity {
                         combinationSpinner.getSelectedItemPosition()));
             }
         });
+
+        roundCountEditText.setFilters(new InputFilter[]{new InputFilterMinMax(1, 12)});
+        roundDurationEditText.setFilters(new InputFilter[]{new InputFilterMinMax(1, 600)});
+        restDurationEditText.setFilters(new InputFilter[]{new InputFilterMinMax(1, 600)});
     }
 
     @Override
