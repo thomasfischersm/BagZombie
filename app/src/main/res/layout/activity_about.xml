@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.playposse.heavybagzombie.activity.HelpActivity">
+    tools:context="com.playposse.heavybagzombie.activity.AboutActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -34,23 +34,45 @@
                 style="@style/sectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/help_troubleshooting_heading" />
+                android:text="@string/about_app_heading" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/help_troubleshooting_body_text" />
+                android:text="@string/about_app_body_text" />
 
             <TextView
                 style="@style/sectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/help_punches_heading" />
+                android:text="@string/about_developer_heading" />
 
             <TextView
                 android:layout_width="match_parent" android:autoLink="all"
                 android:layout_height="wrap_content"
-                android:text="@string/help_punches_body_text" />
+                android:text="@string/about_developer_body_text" />
+
+            <TextView
+                style="@style/sectionHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/about_tarsosdsp_heading" />
+
+            <TextView
+                android:layout_width="match_parent" android:autoLink="all"
+                android:layout_height="wrap_content"
+                android:text="@string/about_tarsosdsp_body_text" />
+
+            <TextView
+                style="@style/sectionHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/about_credits_heading" />
+
+            <TextView
+                android:layout_width="match_parent" android:autoLink="all"
+                android:layout_height="wrap_content"
+                android:text="@string/about_credits_body_text" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

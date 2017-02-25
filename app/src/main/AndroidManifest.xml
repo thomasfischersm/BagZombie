@@ -80,7 +80,12 @@
             android:name=".activity.MicrophonePermissionNeededActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".activity.MainActivity" />
-        <activity android:name=".activity.HelpActivity"></activity>
+        <activity
+            android:name=".activity.HelpActivity"
+            android:parentActivityName=".activity.MainActivity" />
+        <activity
+            android:name=".activity.AboutActivity"
+            android:parentActivityName=".activity.MainActivity" />
     </application>
 
 </manifest>

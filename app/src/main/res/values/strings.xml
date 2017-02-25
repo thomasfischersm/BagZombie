@@ -61,7 +61,17 @@
     <string name="help_troubleshooting_heading">Troubleshooting</string>
     <string name="help_troubleshooting_body_text">The audio detection of bag punches can be finicky. There simply isn\'t a way of differentiating between your punch and a loud punch by someone else next to you. Or a loud sneaker screech may be detected as a punch. If you want quality detection, there are $200 dollar sensors that go into the glove. However, there are things that you can do to improve the sound detection of punches:\n\n1. Be in a quiet room by yourself.\n2. Use head phones. The sound that the app creates will create a sound feedback loop to the app.\n3. Use the sound calibration setting to tune the microphone on your phone.</string>
     <string name="help_punches_heading">Punches</string>
-    <string name="help_punches_body_text">Wonder what those numbers that the app yells mean? They are standardized references to specific punches.\n\n1 = jab\n2 = right hand\n3 = left hook\n4 = right hook (or overhand right)\n5 = left uppercut\n6 = right uppercut\n\nFor more information, see: <a href="http://www.expertboxing.com/boxing-strategy/punch-combinations/johnnys-punching-combinations-list">http://www.expertboxing.com/boxing-strategy/punch-combinations/johnnys-punching-combinations-list</a></string>
+    <string name="help_punches_body_text">Wonder what those numbers that the app yells mean? They are standardized references to specific punches.\n\n1 = jab\n2 = right hand\n3 = left hook\n4 = right hook (or overhand right)\n5 = left uppercut\n6 = right uppercut\n\nFor more information, see:\n<a href="http://www.expertboxing.com/boxing-strategy/punch-combinations/johnnys-punching-combinations-list">http://www.expertboxing.com/boxing-strategy/punch-combinations/johnnys-punching-combinations-list</a></string>
+
+    <!-- About activity -->
+    <string name="about_app_heading">About the app</string>
+    <string name="about_app_body_text">Bag Zombie is a fitness app to make working out with a heavy bag more fun. It simulates an imaginary fight against the heavy bag by calling out punch combinations. The phone\'s microphone listens for punches to tell you the reaction time.\n\nIt\'s a heck of a lot more fun to react to something than to fight an inanimate heavy bag. Still the heavy bag won\'t fight back. It\'s pretty much like a zombie that\'ll take your punches, but now it\'s at least alive in a zombie way!</string>
+    <string name="about_developer_heading">About the developer</string>
+    <string name="about_developer_body_text">I have pioneered online music shopping at one of the first online music startups and the same for online movie downloads. I\'ve worked for the titan of the Internet: Google. Right now, I\'m developing Android apps. When I\'m not coding, you can find me at the beach doing acroyoga. Feel free to contact me at <a href="mailto:thomas@playposse.com">thomas@playposse.com</a></string>
+    <string name="about_tarsosdsp_heading">TarsosDSP</string>
+    <string name="about_tarsosdsp_body_text">The sound detection is done by a software library called TarsosDSP. If anyone knows how to detect the bang of the punch better, please contact me. Also if someone knows how to make tuning the microphone automatic, please let me know.\n\nYou can find the library here:\n<a href="https://github.com/JorenSix/TarsosDSP">https://github.com/JorenSix/TarsosDSP</a></string>
+    <string name="about_credits_heading">Credits and copyright</string>
+    <string name="about_credits_body_text">(C) 2017 Thomas Fischer</string>
 
     <!-- Service notification -->
     <string name="service_notification_title">Bag Zombie</string>
