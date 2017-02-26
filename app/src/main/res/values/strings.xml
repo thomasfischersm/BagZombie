@@ -71,7 +71,7 @@
     <string name="about_tarsosdsp_heading">TarsosDSP</string>
     <string name="about_tarsosdsp_body_text">The sound detection is done by a software library called TarsosDSP. If anyone knows how to detect the bang of the punch better, please contact me. Also if someone knows how to make tuning the microphone automatic, please let me know.\n\nYou can find the library here:\n<a href="https://github.com/JorenSix/TarsosDSP">https://github.com/JorenSix/TarsosDSP</a></string>
     <string name="about_credits_heading">Credits and copyright</string>
-    <string name="about_credits_body_text">(C) 2017 Thomas Fischer\nMale voice by Wade Dauksch\nFemale voice by Katabelle</string>
+    <string name="about_credits_body_text">(C) 2017 Thomas Fischer\n\nMale voice by Wade Dauksch\nFemale voice by Katabelle\n\nThe logo is a combination of artwork from the <a href="thenounproject.com">thenounproject.com</a>:\nPunching Bag by Creative Stall from the Noun Project\nFighter by Nicolas Vicent from the Noun Project\nStar by Ralf Schmitzer from the Noun Project</string>
 
     <!-- Settings activity constants -->
     <string-array name="voices_label_array">
